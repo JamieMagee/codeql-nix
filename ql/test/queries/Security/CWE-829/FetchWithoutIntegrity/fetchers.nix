@@ -58,6 +58,34 @@ let
     narHash = "sha256-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD=";
   };
 
+  # GOOD: inherit (source) hash — the hash IS in this attrset, via
+  # inherit-from. The query must NOT flag this.
+  source = { hash = "sha256-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE="; };
+  safe6 = pkgs.fetchFromGitHub {
+    owner = "example";
+    repo = "foo";
+    rev = "v1.0";
+    inherit (source) hash;
+  };
+
+  # GOOD: inherit hash; — same hash key is inherited from enclosing
+  # `let` scope. Must NOT flag.
+  hash = "sha256-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF=";
+  safe7 = pkgs.fetchurl {
+    url = "https://example.com/x.tar.gz";
+    inherit hash;
+  };
+
+  # GOOD: dynamic attribute name. We can't statically resolve
+  # `${if cond then "hash" else "sha256"}`, so we conservatively assume
+  # it might be an integrity key. Must NOT flag. (Real-world pattern from
+  # pkgs/development/compilers/gcc/default.nix.)
+  is13 = true;
+  safe8 = pkgs.fetchurl {
+    url = "https://example.com/y.tar.gz";
+    ${if is13 then "hash" else "sha256"} = "sha256-GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG=";
+  };
+
   # NEUTRAL: a non-fetcher function call that happens to take a string —
   # must NOT be flagged.
   someOtherCall = builtins.toString "hello";
@@ -71,6 +99,6 @@ in
 {
   inherit
     unsafe1 unsafe2 unsafe3 unsafe4 unsafe5
-    safe1 safe2 safe3 safe4 safe5
+    safe1 safe2 safe3 safe4 safe5 safe6 safe7 safe8
     someOtherCall localFetch;
 }

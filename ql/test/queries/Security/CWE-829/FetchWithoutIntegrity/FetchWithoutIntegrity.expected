@@ -3,4 +3,4 @@
 | fetchers.nix:31:13:35:3 | ApplyExpression | Call to `fetchFromGitHub` is not content-pinned: no `sha256`, `narHash`, or `hash` attribute is set. |
 | fetchers.nix:46:28:46:72 | ApplyExpression | Call to `fetchTarball` is not content-pinned: bare-string argument has no content hash. |
 | fetchers.nix:49:13:52:3 | ApplyExpression | Call to `fetchGit` is not content-pinned: no `sha256`, `narHash`, or `hash` attribute is set. |
-| fetchers.nix:69:44:69:64 | ApplyExpression | Call to `fetchTarball` is not content-pinned: bare-string argument has no content hash. |
+| fetchers.nix:97:44:97:64 | ApplyExpression | Call to `fetchTarball` is not content-pinned: bare-string argument has no content hash. |

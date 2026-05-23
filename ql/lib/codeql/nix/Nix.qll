@@ -78,8 +78,15 @@ predicate attrsetBindings(Expr attrset, BindingSet bindingSet) {
  * Holds if `attrset` contains a top-level `Binding` whose attrpath is
  * a single identifier matching `name`.
  *
- * Only handles the simple `name = …;` shape, not `name1.name2 = …;`
- * dotted paths or `inherit name;`.
+ * Recognises:
+ *   - direct `name = …;` bindings
+ *   - `inherit name;` (Inherit), where the binding takes its value from
+ *     the enclosing scope
+ *   - `inherit (expr) name;` (InheritFrom), where the binding takes its
+ *     value from a specific source expression
+ *
+ * Does not recognise `name1.name2 = …;` dotted paths or `${dynamic} = …;`
+ * dynamic attribute names — see `hasDynamicTopLevelBinding`.
  */
 predicate hasTopLevelBinding(Expr attrset, string name) {
   exists(BindingSet bs, Binding b, Attrpath ap |
@@ -90,12 +97,35 @@ predicate hasTopLevelBinding(Expr attrset, string name) {
     not exists(ap.getAttr(1))
   )
   or
-  // `inherit name;` — the binding inherits the value of `name` from the
-  // enclosing scope, which counts as the attrset having that attribute.
+  // `inherit name;`
   exists(BindingSet bs, Inherit inh |
     attrsetBindings(attrset, bs) and
     inh = bs.getBinding(_) and
     name = inh.getAttrs().getAttr(_).(Identifier).getValue()
+  )
+  or
+  // `inherit (expr) name;`
+  exists(BindingSet bs, InheritFrom inh |
+    attrsetBindings(attrset, bs) and
+    inh = bs.getBinding(_) and
+    name = inh.getAttrs().getAttr(_).(Identifier).getValue()
+  )
+}
+
+/**
+ * Holds if `attrset` contains a top-level `Binding` whose attrpath
+ * begins with a dynamically-named attribute — either a `${…}`
+ * interpolation or a quoted string. Such bindings cannot be classified
+ * by name statically; queries that ask "does this attrset have
+ * attribute X?" must conservatively assume the answer may be yes.
+ */
+predicate hasDynamicTopLevelBinding(Expr attrset) {
+  exists(BindingSet bs, Binding b, Attrpath ap, AstNode firstAttr |
+    attrsetBindings(attrset, bs) and
+    b = bs.getBinding(_) and
+    ap = b.getAttrpath() and
+    firstAttr = ap.getAttr(0) and
+    (firstAttr instanceof Interpolation or firstAttr instanceof StringExpression)
   )
 }
 

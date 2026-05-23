@@ -95,11 +95,17 @@ class FetcherCall extends ApplyExpression {
  * For git fetchers, an integrity attribute is required even if a `rev`
  * is set — `rev` alone provides reproducibility but not authenticity
  * (rewritten history can swap content under the same rev).
+ *
+ * Conservatively suppresses results for attrsets that contain a
+ * dynamically-named binding (e.g. `${if cond then "hash" else "sha256"}
+ * = …;`), since the static analysis cannot prove the dynamic name does
+ * not resolve to an integrity attribute.
  */
 predicate isUnpinnedAttrsetFetch(FetcherCall call, Expr attrset) {
   attrset = call.getArgument() and
   (attrset instanceof AttrsetExpression or attrset instanceof RecAttrsetExpression) and
-  not exists(string attr | hasTopLevelBinding(attrset, attr) and isIntegrityAttribute(attr))
+  not exists(string attr | hasTopLevelBinding(attrset, attr) and isIntegrityAttribute(attr)) and
+  not hasDynamicTopLevelBinding(attrset)
 }
 
 /**
