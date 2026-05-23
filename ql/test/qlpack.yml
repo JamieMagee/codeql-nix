@@ -1,0 +1,8 @@
+name: jamiemagee/nix-tests
+groups: [nix, test]
+dependencies:
+  jamiemagee/nix-all: ${workspace}
+  jamiemagee/nix-queries: ${workspace}
+extractor: nix
+tests: .
+warnOnImplicitThis: true
