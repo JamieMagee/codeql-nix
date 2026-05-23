@@ -1,0 +1,16 @@
+name: nix
+display_name: Nix
+version: 0.0.1
+column_kind: utf8
+legacy_qltest_extraction: true
+build_modes:
+- none
+github_api_languages:
+- Nix
+scc_languages:
+- Nix
+file_types:
+- name: nix
+  display_name: Nix
+  extensions:
+  - .nix

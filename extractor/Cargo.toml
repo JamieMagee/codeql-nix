@@ -1,0 +1,23 @@
+[package]
+name = "codeql-extractor-nix"
+version = "0.0.1"
+authors = ["Jamie Magee"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/JamieMagee/codeql-nix"
+description = "CodeQL extractor for the Nix expression language"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+flate2 = "1.0"
+clap = { version = "4.4", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+rayon = "1.8"
+regex = "1.11"
+# Tree Sitter
+tree-sitter-nix = { git = "https://github.com/nix-community/tree-sitter-nix", rev = "69fbfb02896cdd27cb7ff3cd61f7f3f6bde4f017" }
+tree-sitter = "^0.25"
+# CodeQL (matches the pin used by GitHubSecurityLab/codeql-extractor-bicep)
+codeql-extractor = { git = "https://github.com/github/codeql", rev = "c524a98eb91c769cb2994b8373181c2ebd27c20f" }
