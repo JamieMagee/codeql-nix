@@ -1,0 +1,25 @@
+# Rust
+/target/
+/extractor/target/
+**/*.rs.bk
+
+# CodeQL artifacts
+/extractor-pack/
+*.trap
+*.trap.gz
+*.trap.zst
+
+# Nix
+/result
+/result-*
+.direnv/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Test databases
+/tmp-db/
+*.codeql-db/
