@@ -1,0 +1,7 @@
+name: jamiemagee/nix-queries
+version: 0.0.1
+extractor: nix
+dependencies:
+  jamiemagee/nix-all: ${workspace}
+suites: codeql-suites
+defaultSuiteFile: codeql-suites/nix-code-scanning.qls

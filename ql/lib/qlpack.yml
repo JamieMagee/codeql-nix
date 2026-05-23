@@ -1,0 +1,9 @@
+library: true
+warnOnImplicitThis: false
+name: jamiemagee/nix-all
+version: 0.0.1
+dbscheme: nix.dbscheme
+extractor: nix
+dependencies:
+  codeql/util: "^1.0.0"
+  codeql/yaml: "^1.0.0"

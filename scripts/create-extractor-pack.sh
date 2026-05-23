@@ -35,8 +35,16 @@ if [[ -n "$CODEQL_BINARY" ]]; then
   $CODEQL_BINARY query format -i ql/lib/codeql/nix/ast/internal/TreeSitter.qll
 fi
 
-# 4. Ensure a stats file exists (empty is OK for Phase 0).
-touch ql/lib/nix.dbscheme.stats
+# 4. Ensure a stats file exists. Empty file isn't valid XML; write a stub
+#    if the committed one is missing.
+if [[ ! -s ql/lib/nix.dbscheme.stats ]]; then
+  cat > ql/lib/nix.dbscheme.stats <<'STATS'
+<dbstats>
+    <typesizes></typesizes>
+    <stats></stats>
+</dbstats>
+STATS
+fi
 
 # 5. Assemble the extractor pack.
 echo "Creating extractor pack for $platform"

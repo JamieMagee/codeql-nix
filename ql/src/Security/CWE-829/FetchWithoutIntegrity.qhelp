@@ -1,0 +1,78 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A fetcher call (<code>builtins.fetchTarball</code>, <code>fetchurl</code>,
+<code>fetchgit</code>, <code>fetchFromGitHub</code>, …) without a content
+hash is not reproducible and not authentic. Every evaluation re-downloads
+the URL or repository contents, and Nix cannot detect tampering or
+upstream history rewrites.
+</p>
+<p>
+This is the Nix analogue of pinning a GitHub Action to a mutable tag
+instead of a commit SHA (CWE-829). It is one of the most common
+supply-chain vulnerabilities in Nix codebases.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Always pass a content hash to fetcher calls. Use <code>nix-prefetch-url</code>,
+<code>nix-prefetch-git</code>, or <code>nix store prefetch-file</code> to
+compute the correct value. For git-based fetchers, also pin the
+<code>rev</code> to a specific commit SHA.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — a bare-string <code>fetchTarball</code>:</p>
+<sample language="nix">
+let
+  src = builtins.fetchTarball "https://example.com/foo-1.0.tar.gz";
+in
+...
+</sample>
+<p>Unsafe — an attribute-set <code>fetchurl</code> with no hash:</p>
+<sample language="nix">
+fetchurl {
+  url = "https://example.com/foo-1.0.tar.gz";
+}
+</sample>
+<p>Safe — content is pinned to a known hash:</p>
+<sample language="nix">
+let
+  src = builtins.fetchTarball {
+    url = "https://example.com/foo-1.0.tar.gz";
+    sha256 = "0000000000000000000000000000000000000000000000000000";
+  };
+in
+...
+</sample>
+<sample language="nix">
+fetchFromGitHub {
+  owner = "example";
+  repo = "foo";
+  rev = "v1.0";
+  hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+}
+</sample>
+</example>
+
+<references>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/builtins#builtins-fetchTarball">
+builtins.fetchTarball</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/829.html">CWE-829:
+Inclusion of Functionality from Untrusted Control Sphere</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/494.html">CWE-494:
+Download of Code Without Integrity Check</a>
+</li>
+</references>
+</qhelp>
