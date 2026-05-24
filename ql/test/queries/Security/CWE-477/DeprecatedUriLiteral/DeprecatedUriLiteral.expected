@@ -1,0 +1,3 @@
+| fixture.nix:5:14:5:32 | https://example.com | Bare URI literal 'https://example.com' is deprecated by Nix RFC 45; quote it as a string. |
+| fixture.nix:6:12:6:32 | ftp://example.com/foo | Bare URI literal 'ftp://example.com/foo' is deprecated by Nix RFC 45; quote it as a string. |
+| fixture.nix:7:9:7:36 | https://example.com/x.tar.gz | Bare URI literal 'https://example.com/x.tar.gz' is deprecated by Nix RFC 45; quote it as a string. |

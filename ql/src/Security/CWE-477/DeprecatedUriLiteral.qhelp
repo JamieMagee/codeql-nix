@@ -1,0 +1,51 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Bare (unquoted) URI literals such as <code>https://example.com</code> are
+deprecated by Nix RFC 45 and are scheduled for removal from the language.
+Using a quoted string keeps the code compatible with current and future Nix
+versions.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Wrap URI values in quotes so they are parsed as ordinary string literals, for
+example <code>"https://example.com"</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Deprecated — bare URI literals:</p>
+<sample language="nix">
+let
+  src = https://example.com/foo.tar.gz;
+  url = ftp://example.com/foo;
+in
+  { inherit src url; }
+</sample>
+<p>Recommended — quoted strings:</p>
+<sample language="nix">
+let
+  src = "https://example.com/foo.tar.gz";
+  url = "ftp://example.com/foo";
+in
+  { inherit src url; }
+</sample>
+</example>
+
+<references>
+<li>
+Nix RFC 45:
+<a href="https://github.com/NixOS/rfcs/blob/master/rfcs/0045-deprecate-url-syntax.md">
+Deprecate URL syntax</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/477.html">CWE-477:
+Use of Obsolete Function</a>
+</li>
+</references>
+</qhelp>

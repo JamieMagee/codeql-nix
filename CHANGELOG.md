@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BuiltinsGetEnv.ql` (CWE-807): flags `builtins.getEnv` and bare `getEnv`
   calls under `with builtins;` because they read the host environment during
   evaluation.
+- `DeprecatedUriLiteral.ql` (CWE-477): flags bare URI literals deprecated by Nix RFC 45 and recommends quoted strings.
 - Phase 1 library expansion:
   - `ql/lib/codeql/nix/Builtins.qll` — `BuiltinCall` class recognising
     `builtins.X` invocations and (best-effort) bare `X` references
