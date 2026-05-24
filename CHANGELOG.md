@@ -7,16 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-24 (Phase 2)
+
 ### Added
 
 - `ql/lib/codeql/nix/Taint.qll`: a lightweight taint-tracking library
   targeting the shell-injection use case. Defines `Source` (untrusted
-  function formals via a nixpkgs-aware allow-list, `builtins.fetch*`,
-  `builtins.getEnv`, `import`), `Sink` (interpolations and direct
-  bindings to shell-context attributes), `Sanitizer`
-  (`lib.escapeShellArg`/`lib.escapeShellArgs`), and `flowsTo` /
-  `isReachableFromSanitizer` predicates. Self-contained — does NOT
-  depend on `DataFlow::InputSig` (that's a Phase 3 project).
+  function formals via a nixpkgs-aware allow-list, `builtins.getEnv`),
+  `Sink` (interpolations and direct bindings to shell-context
+  attributes, excluding path-style `${pkg}/...` patterns),
+  `Sanitizer` (`lib.escapeShellArg`/`lib.escapeShellArgs`), and
+  `flowsTo` / `isReachableFromSanitizer` predicates. Self-contained —
+  does NOT depend on `DataFlow::InputSig` (that's a Phase 3 project).
 - `ql/src/Security/CWE-077/ShellInjectionInBuildPhase.ql` (CWE-077,
   CWE-078): reports flows from untrusted sources into shell-context
   attribute interpolations without `lib.escapeShellArg`.
@@ -25,6 +27,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sanitizer call. The defensive-coding counterpart of the above.
 - `Scope.qll`: `isCallbackArgName` predicate exempting `finalAttrs`,
   `prevAttrs`, and `oldAttrs` from `UnusedBinding` (deadnix convention).
+
+### Changed
+
+- `Scope.qll`: `getAStrictAncestor` and `resolvesTo` are now `cached`.
+  This materialises the recursive ancestor closure once per database
+  and drops `UnusedBinding` full-nixpkgs analyze time from ~2 minutes
+  to ~16 seconds. Required to make `Taint.qll`'s flow predicates
+  tractable on the full nixpkgs corpus.
+
+### Performance
+
+- Full nixpkgs analyze time (43,142 .nix files, 12 queries,
+  `--threads=0`): ~39 s, down from ~3 m 2 s in Phase 1's 10-query
+  baseline despite adding two flow-based queries.
+
+### Notes
+
+- `FetcherCall` and `import` were dropped from the `Source` set during
+  Phase 2 triage: they always evaluate to Nix store paths or attrsets,
+  never to user-controlled strings that can break shell quoting.
+  Including them as sources produced almost-exclusively false positives.
+- The `with`-scope handling and explicit `defUseChain` caching items
+  from the Phase 2 plan were deferred to Phase 3 — neither produced a
+  precision or performance improvement large enough to justify their
+  cost when evaluated in isolation.
 
 ## [0.1.0] — 2026-05-23 (Phase 1)
 

@@ -48,29 +48,34 @@ predicate isTrustedFormalName(string name) {
   name =
     [
       // Stdenv and cross-compilation infrastructure
-      "stdenv", "stdenvNoCC", "buildPackages", "hostPlatform", "targetPlatform",
-      "buildPlatform", "lib", "pkgs", "pkgs_i686", "callPackage", "callPackages",
+      "stdenv", "stdenvNoCC", "buildPackages", "hostPlatform", "targetPlatform", "buildPlatform",
+      "lib", "pkgs", "pkgs_i686", "callPackage", "callPackages",
       // Common derivation builders
-      "mkDerivation", "mkShell", "mkShellNoCC", "writeText", "writeScript",
-      "writeShellScript", "writeShellScriptBin", "runCommand", "runCommandLocal",
-      "runCommandCC", "writers",
+      "mkDerivation", "mkShell", "mkShellNoCC", "writeText", "writeScript", "writeShellScript",
+      "writeShellScriptBin", "runCommand", "runCommandLocal", "runCommandCC", "writers",
       // Fetchers (results are paths; the hash is what matters, not the call site)
-      "fetchurl", "fetchgit", "fetchzip", "fetchpatch", "fetchpatch2",
-      "fetchFromGitHub", "fetchFromGitLab", "fetchFromBitbucket",
-      "fetchFromSourcehut", "fetchFromGitea", "fetchsvn", "fetchhg",
-      "fetchCargoVendor", "fetchYarnDeps", "fetchPypi", "fetchTarball",
-      "fetchGit", "fetchTree", "fetchClosure",
+      "fetchurl", "fetchgit", "fetchzip", "fetchpatch", "fetchpatch2", "fetchFromGitHub",
+      "fetchFromGitLab", "fetchFromBitbucket", "fetchFromSourcehut", "fetchFromGitea", "fetchsvn",
+      "fetchhg", "fetchCargoVendor", "fetchYarnDeps", "fetchPypi", "fetchTarball", "fetchGit",
+      "fetchTree", "fetchClosure",
       // Wrappers, hooks, linkers
-      "makeWrapper", "wrapProgram", "makeBinaryWrapper", "substituteAll",
-      "autoreconfHook", "autoPatchelfHook", "copyDesktopItems",
+      "makeWrapper", "wrapProgram", "makeBinaryWrapper", "substituteAll", "autoreconfHook",
+      "autoPatchelfHook", "copyDesktopItems",
       // Common nixpkgs build tooling
-      "cmake", "meson", "ninja", "pkg-config", "pkgconf", "gnumake", "make",
-      "automake", "autoconf", "libtool", "intltool", "gettext", "perl", "python",
-      "qmake", "qt5", "qt6", "wrapQtAppsHook", "wrapGAppsHook",
+      "cmake", "meson", "ninja", "pkg-config", "pkgconf", "gnumake", "make", "automake", "autoconf",
+      "libtool", "intltool", "gettext", "perl", "python", "qmake", "qt5", "qt6", "wrapQtAppsHook",
+      "wrapGAppsHook",
       // Language toolchains
-      "rustc", "cargo", "rustPlatform", "go", "buildGoModule", "buildGoPackage",
-      "nodejs", "buildNpmPackage", "python3", "python2", "ruby", "ghc", "java",
-      "jdk", "jre", "openjdk", "clang", "gcc", "binutils"
+      "rustc", "cargo", "rustPlatform", "go", "buildGoModule", "buildGoPackage", "nodejs",
+      "buildNpmPackage", "python3", "python2", "ruby", "ghc", "java", "jdk", "jre", "openjdk",
+      "clang", "gcc", "binutils",
+      // Shells and shell-related infrastructure (results are store paths to interpreters)
+      "runtimeShell", "runtimeShellPackage", "bash", "zsh", "fish", "dash", "shellcheck",
+      "writeShellApplication",
+      // Common architecture / platform info
+      "hostSystem", "system", "buildSystem", "targetSystem",
+      // Common path/output names that are conventionally store paths or outputs
+      "storeDir", "out", "outputs"
     ]
 }
 
@@ -82,15 +87,10 @@ predicate isTrustedFormalName(string name) {
 predicate isShellContextAttribute(string name) {
   name =
     [
-      "buildPhase", "preBuild", "postBuild",
-      "installPhase", "preInstall", "postInstall",
-      "configurePhase", "preConfigure", "postConfigure",
-      "checkPhase", "preCheck", "postCheck",
-      "fixupPhase", "preFixup", "postFixup",
-      "unpackPhase", "preUnpack", "postUnpack",
-      "patchPhase", "prePatch", "postPatch",
-      "distPhase", "preDist", "postDist",
-      "configureScript", "buildCommand"
+      "buildPhase", "preBuild", "postBuild", "installPhase", "preInstall", "postInstall",
+      "configurePhase", "preConfigure", "postConfigure", "checkPhase", "preCheck", "postCheck",
+      "fixupPhase", "preFixup", "postFixup", "unpackPhase", "preUnpack", "postUnpack", "patchPhase",
+      "prePatch", "postPatch", "distPhase", "preDist", "postDist", "configureScript", "buildCommand"
     ]
 }
 
@@ -99,19 +99,19 @@ predicate isShellContextAttribute(string name) {
  * concrete shapes recognised:
  *
  * 1. A `VariableExpression` resolving to a function-formal whose name
- *    is not in `isTrustedFormalName`.
- * 2. A `FetcherCall` (its result includes the URL/content from a
- *    remote, even if pinned — the value crosses a trust boundary).
- * 3. A `builtins.getEnv` call (its result is the host environment).
- * 4. An `import` call whose argument is non-trivial (we treat all
- *    imports as taint sources to be safe; trivial pure-path imports
- *    rarely cause issues).
+ *    is not in `isTrustedFormalName`. (Formals are the canonical
+ *    user-supplied entry point — typically `version`, `rev`, `pname`,
+ *    `domain`, `url`, etc.)
+ * 2. A `builtins.getEnv` call (its result is the host environment).
+ *
+ * `FetcherCall` and `import` are NOT sources: fetchers always
+ * evaluate to a Nix store path (always shell-safe), and `import`
+ * almost always returns an attrset or a function — neither of which
+ * is a string flowing into a shell context.
  */
 class Source extends Expr {
   Source() {
-    exists(
-      VariableExpression v, Scope scope, string name, Identifier defNode, Formal fml
-    |
+    exists(VariableExpression v, Scope scope, string name, Identifier defNode, Formal fml |
       this = v and
       resolvesTo(v, scope) and
       scope instanceof FunctionExpression and
@@ -122,14 +122,7 @@ class Source extends Expr {
       not isTrustedFormalName(name)
     )
     or
-    this instanceof FetcherCall
-    or
     exists(BuiltinCall c | this = c and c.getName() = "getEnv")
-    or
-    exists(ApplyExpression imp |
-      this = imp and
-      imp.getFunction().(VariableExpression).getName().getValue() = "import"
-    )
   }
 }
 
@@ -156,6 +149,28 @@ private predicate stringInBinding(Binding b, AstNode str) {
 }
 
 /**
+ * Holds if `interp` is followed inside its enclosing string by a
+ * literal fragment beginning with `/`. Such interpolations are
+ * idiomatic path-construction sites (e.g. `${pkg}/bin/foo`), where
+ * the interpolated value is a Nix store path — never shell-unsafe in
+ * practice. Excluded from `Sink` to suppress the dominant false-
+ * positive class.
+ */
+private predicate isPathStyleInterpolation(Interpolation interp) {
+  exists(StringExpression str, int i, StringFragment frag |
+    str.getChild(i) = interp and
+    str.getChild(i + 1) = frag and
+    frag.getValue().regexpMatch("(?s)/.*")
+  )
+  or
+  exists(IndentedStringExpression str, int i, StringFragment frag |
+    str.getChild(i) = interp and
+    str.getChild(i + 1) = frag and
+    frag.getValue().regexpMatch("(?s)/.*")
+  )
+}
+
+/**
  * An `${…}` interpolation expression appearing inside a string that
  * is bound to a shell-context attribute, OR a non-string expression
  * bound directly to a shell-context attribute (e.g. the result of
@@ -169,6 +184,7 @@ class Sink extends Expr {
     // Interpolation inside a string bound (possibly via let / parens) to a phase attr
     exists(Interpolation interp, AstNode str, Binding b, Attrpath ap |
       this = interp.getExpression() and
+      not isPathStyleInterpolation(interp) and
       (
         interp = str.(StringExpression).getChild(_) or
         interp = str.(IndentedStringExpression).getChild(_)
@@ -202,9 +218,7 @@ class Sink extends Expr {
  */
 class Sanitizer extends ApplyExpression {
   Sanitizer() {
-    exists(string name |
-      name = ["escapeShellArg", "escapeShellArgs", "escapeShellArgs'"]
-    |
+    exists(string name | name = ["escapeShellArg", "escapeShellArgs", "escapeShellArgs'"] |
       // Bare: `escapeShellArg arg`
       name = this.getFunction().(VariableExpression).getName().getValue()
       or
@@ -228,7 +242,13 @@ class Sanitizer extends ApplyExpression {
  *   - String concatenation with `+`: both operands flow to the result.
  *   - Let-binding def-use: a binding's RHS flows to every reference
  *     of that name within the let's body or other bindings.
+ *
+ * The let-binding clause is structured so that the cached
+ * `resolvesTo` predicate drives the enumeration, avoiding a join
+ * blow-up on the cross-product of all variable references and all
+ * let-bindings sharing a name.
  */
+cached
 private predicate flowStep(Expr predecessor, Expr successor) {
   predecessor = successor.(ParenthesizedExpression).getExpression()
   or
@@ -238,14 +258,37 @@ private predicate flowStep(Expr predecessor, Expr successor) {
     (predecessor = e.getLeft() or predecessor = e.getRight())
   )
   or
-  exists(LetExpression letExpr, Binding b, VariableExpression ref, Attrpath ap |
-    b = letExpr.getChild().getBinding(_) and
-    ap = b.getAttrpath() and
-    not exists(ap.getAttr(1)) and
-    ref.getName().getValue() = ap.getAttr(0).(Identifier).getValue() and
+  exists(VariableExpression ref, LetExpression letExpr, Scope scope, string name, Identifier defNode |
     resolvesTo(ref, letExpr) and
-    predecessor = b.getExpression() and
+    scope = letExpr and
+    name = ref.getName().getValue() and
+    scope.definesName(name, defNode) and
+    exists(Binding b |
+      b = letExpr.getChild().getBinding(_) and
+      b.getAttrpath().getAttr(0) = defNode and
+      predecessor = b.getExpression()
+    ) and
     successor = ref
+  )
+}
+
+/**
+ * Holds if `e` flows transitively (forward) to `sink` through zero or
+ * more `flowStep` edges, without passing through a `Sanitizer`.
+ *
+ * Anchored on `Sink` (the second argument) so the recursion seeds
+ * from the small set of sinks and walks backwards through the flow
+ * graph. Forward-anchoring (from `Source`) is intractable on full
+ * nixpkgs because non-trusted function formals are pervasive.
+ */
+cached
+private predicate flowsToSink(Expr e, Sink sink) {
+  e = sink
+  or
+  exists(Expr next |
+    flowsToSink(next, sink) and
+    flowStep(e, next) and
+    not e instanceof Sanitizer
   )
 }
 
@@ -257,15 +300,7 @@ private predicate flowStep(Expr predecessor, Expr successor) {
  * the argument of a sanitizer call, the call's RESULT is considered
  * untainted for downstream analysis.
  */
-predicate flowsTo(Source src, Expr sink) {
-  src = sink
-  or
-  exists(Expr mid |
-    flowsTo(src, mid) and
-    flowStep(mid, sink) and
-    not mid instanceof Sanitizer
-  )
-}
+predicate flowsTo(Source src, Sink sink) { flowsToSink(src, sink) }
 
 /**
  * Holds if `sink` has a `Sanitizer` somewhere in its backward flow
@@ -275,11 +310,6 @@ predicate flowsTo(Source src, Expr sink) {
  * Used by `MissingShellEscape.ql` to suppress alerts when the user
  * has already applied a defensive escape.
  */
-predicate isReachableFromSanitizer(Expr sink) {
-  sink instanceof Sanitizer
-  or
-  exists(Expr predecessor |
-    flowStep(predecessor, sink) and
-    isReachableFromSanitizer(predecessor)
-  )
+predicate isReachableFromSanitizer(Sink sink) {
+  exists(Sanitizer san | flowsToSink(san, sink))
 }

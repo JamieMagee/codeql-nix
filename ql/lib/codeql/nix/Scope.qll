@@ -120,7 +120,15 @@ class NameReference extends AstNode {
   string getName() { result = name }
 }
 
-/** Gets a strict (non-reflexive) ancestor of `n`. */
+/**
+ * Gets a strict (non-reflexive) ancestor of `n`.
+ *
+ * Cached because this transitive ancestor relation is the inner loop
+ * of `resolvesTo` (and therefore of every flow predicate built on top).
+ * Materialising it once across the whole database is cheaper than
+ * re-evaluating it for each call site.
+ */
+cached
 private AstNode getAStrictAncestor(AstNode n) {
   result = n.getParent()
   or
@@ -165,6 +173,7 @@ private predicate isVisibleScope(NameReference ref, Scope scope) {
  * result for that reference — meaning the name is either a top-level
  * input, a builtin, or a `with`-introduced attribute.
  */
+cached
 predicate resolvesTo(NameReference ref, Scope scope) {
   scope.definesName(ref.getName(), _) and
   isVisibleScope(ref, scope) and

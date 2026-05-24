@@ -1,5 +1,5 @@
 name: jamiemagee/nix-queries
-version: 0.1.0
+version: 0.2.0
 extractor: nix
 dependencies:
   jamiemagee/nix-all: ${workspace}
