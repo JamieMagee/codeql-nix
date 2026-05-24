@@ -1,0 +1,59 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A single attribute set literal defines the same top-level key more than once.
+In Nix, duplicate keys are rejected when the attrset is evaluated, so the
+expression fails at runtime.
+</p>
+<p>
+This often happens after copy/paste or refactoring, especially in large
+attribute sets such as derivations.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Keep each top-level key unique within an attribute set literal. Rename one
+binding, merge the values deliberately, or move nested data under distinct
+attribute paths.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic:</p>
+<sample language="nix">
+let
+  badAttrset = {
+    pname = "demo";
+    pname = "other";
+  };
+in
+null
+</sample>
+<p>Correct:</p>
+<sample language="nix">
+let
+  goodAttrset = {
+    pname = "demo";
+    version = "1.0";
+  };
+in
+null
+</sample>
+</example>
+
+<references>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/syntax#attrs-literal">
+Attribute Set</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/710.html">CWE-710:
+Improper Adherence to Coding Standards</a>
+</li>
+</references>
+</qhelp>
