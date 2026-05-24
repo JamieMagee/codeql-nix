@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ql/src/Security/CWE-078/SpaceInFlagString.ql` (plus qhelp and tests) to detect flag-list string literals with embedded whitespace that Bash word-splits into multiple argv entries.
 - `RecAttrsetMerge.ql` (CWE-665): warns when `//` merges a `rec { ... }`
   attrset, since recursive references do not see the merged result.
+- `DuplicateAttrsetKey.ql` (CWE-710): detects duplicate top-level keys in a single attrset literal before evaluation fails.
 - Phase 1 library expansion:
   - `ql/lib/codeql/nix/Builtins.qll` — `BuiltinCall` class recognising
     `builtins.X` invocations and (best-effort) bare `X` references

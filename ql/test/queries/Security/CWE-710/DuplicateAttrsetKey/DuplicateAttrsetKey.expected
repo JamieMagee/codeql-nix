@@ -1,0 +1,2 @@
+| fixture.nix:4:5:4:10 | Binding | Duplicate attrset key `a`; earlier definition at $@. | fixture.nix:3:5:3:10 | Binding | a |
+| fixture.nix:10:7:10:12 | Binding | Duplicate attrset key `a`; earlier definition at $@. | fixture.nix:9:7:9:12 | Binding | a |
