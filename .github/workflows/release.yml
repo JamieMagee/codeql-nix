@@ -22,20 +22,37 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31
+      - name: Install Rust toolchain
+        # Pinned SHA — this is dtolnay/rust-toolchain's `stable` channel
+        # branch, which resolves to the latest stable release at the time
+        # of the SHA pin.
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            accept-flake-config = true
+          toolchain: stable
 
       - name: Cache cargo registry and target
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: . -> target
 
-      - name: Build extractor pack
-        run: nix develop --command ./scripts/create-extractor-pack.sh
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Assemble extractor pack
+        # The dbscheme and TreeSitter.qll are committed to the repo, so
+        # we can assemble the pack without re-running `extractor generate`
+        # and without needing the CodeQL CLI on this runner.
+        run: |
+          set -euo pipefail
+          mkdir -p extractor-pack/tools/linux64
+          cp codeql-extractor.yml extractor-pack/
+          cp ql/lib/nix.dbscheme extractor-pack/
+          cp ql/lib/nix.dbscheme.stats extractor-pack/
+          cp -r tools/* extractor-pack/tools/
+          chmod +x extractor-pack/tools/*.sh
+          cp target/release/codeql-extractor-nix extractor-pack/tools/linux64/extractor
+          file extractor-pack/tools/linux64/extractor
+          ldd extractor-pack/tools/linux64/extractor || true
 
       - name: Determine tag and asset name
         id: meta
@@ -54,7 +71,6 @@ jobs:
         run: |
           tag="${{ steps.meta.outputs.tag }}"
           version="${tag#v}"
-          # Pull the section between "## [<version>]" and the next "## [" heading.
           awk -v ver="$version" '
             BEGIN { in_section = 0 }
             /^## \[/ {
