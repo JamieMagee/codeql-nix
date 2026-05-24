@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `hasInterpolation`, `indentedHasInterpolation`, `isLookupPath`
     predicates.
 - `CHANGELOG.md` and `CONTRIBUTING.md`.
+- `ql/src/Security/CWE-477/LegacyLetAttrset.ql` (CWE-477): flags the deprecated
+  legacy `let { body = …; }` attrset syntax and recommends modern
+  `let ... in ...` instead.
 
 ## [0.0.1] — 2026-05-23 (Phase 0)
 

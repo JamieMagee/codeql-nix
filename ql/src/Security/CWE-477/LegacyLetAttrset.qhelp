@@ -1,0 +1,61 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+The legacy <code>let { body = …; }</code> form is a deprecated Nix syntax
+that evaluates to the value of the <code>body</code> attribute. It is kept
+only for backwards compatibility, and modern Nix gates it behind extra
+experimental features.
+</p>
+<p>
+Using the modern <code>let … in …</code> form is clearer, idiomatic, and more
+portable across current Nix tooling and versions.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Rewrite legacy <code>let { body = expr; ... }</code> expressions as
+<code>let ... in expr</code>. If you actually want an attribute set value,
+use a plain <code>{ ... }</code> attrset instead of a legacy <code>let</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — deprecated legacy <code>let { body = …; }</code> syntax:</p>
+<sample language="nix">
+let { body = 1; }
+</sample>
+<p>Unsafe — legacy syntax with additional bindings:</p>
+<sample language="nix">
+let {
+  body = a;
+  a = 1;
+}
+</sample>
+<p>Safe — modern <code>let … in …</code> syntax:</p>
+<sample language="nix">
+let
+  x = 1;
+in
+x
+</sample>
+<p>Safe — if you mean to return an attribute set, use a plain attrset:</p>
+<sample language="nix">
+{ a = 1; }
+</sample>
+</example>
+
+<references>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/syntax.html">syntax</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/477.html">CWE-477:
+Use of Obsolete Function</a>
+</li>
+</references>
+</qhelp>
