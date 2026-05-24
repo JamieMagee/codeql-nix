@@ -15,6 +15,12 @@ underscore (e.g. <code>_module</code>, <code>_unused</code>) are
 intentionally exempt. Use the <code>_</code>-prefix to signal that a
 parameter is destructured for documentation or padding but not used.
 </p>
+<p>
+The conventional <code>mkDerivation</code> callback-argument names
+<code>finalAttrs</code>, <code>prevAttrs</code>, and <code>oldAttrs</code>
+are also exempt — they may be declared for <code>overrideAttrs</code>
+callers even when the package body itself does not reference them.
+</p>
 </overview>
 
 <recommendation>

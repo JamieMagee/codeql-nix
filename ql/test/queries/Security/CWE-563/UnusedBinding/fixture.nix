@@ -80,6 +80,16 @@ let
   # GOOD: function returns its `inherit`-ed attribute set — `a` and `b` are
   # both used by the inherit (the inherit Identifier counts as a reference).
   inheritsParamsBack = { a, b }: { inherit a b; };
+
+  # GOOD: mkDerivation finalAttrs callback — finalAttrs may be observed
+  # by overrideAttrs callers even when not used directly in the body
+  finalAttrsCallback = finalAttrs: { pname = "demo"; };
+
+  # GOOD: prevAttrs in overrideAttrs callback
+  prevAttrsCallback = prevAttrs: { extraFlags = [ ]; };
+
+  # GOOD: oldAttrs in overrideAttrs callback
+  oldAttrsCallback = oldAttrs: { src = ./.; };
 in
 {
   inherit
@@ -89,5 +99,6 @@ in
     unusedInherit usedInherit
     usedLambdaParam unusedLambdaParam
     shadowedButUsed shadowedAndUnused
-    inheritsParamsBack;
+    inheritsParamsBack
+    finalAttrsCallback prevAttrsCallback oldAttrsCallback;
 }

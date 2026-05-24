@@ -176,14 +176,29 @@ predicate resolvesTo(NameReference ref, Scope scope) {
 }
 
 /**
+ * Holds if `name` is a conventional `mkDerivation` callback-argument
+ * name (`finalAttrs`, `prevAttrs`, `oldAttrs`). These are introduced
+ * by the `overrideAttrs` callback contract and may be declared even
+ * when the package body itself does not reference them — external
+ * `overrideAttrs` callers can still observe them through the callback
+ * shape. Treat them as exempt from `UnusedBinding`, matching deadnix's
+ * documented policy on callback arguments.
+ */
+predicate isCallbackArgName(string name) { name = ["finalAttrs", "prevAttrs", "oldAttrs"] }
+
+/**
  * Holds if `scope` defines `name` at `defNode` but no in-scope
  * `NameReference` resolves there.
  *
  * Identifiers starting with `_` are exempt by the deadnix convention.
  *
- * Bindings inside a `rec { … }` attrset are also exempt, because the
- * whole attrset is externally accessible — a `rec` binding that isn't
- * used by another binding in the same block may still be used by an
+ * Conventional `mkDerivation` callback-argument names (`finalAttrs`,
+ * `prevAttrs`, `oldAttrs`) are exempt — they may be declared for
+ * `overrideAttrs` callers even when not used in the body.
+ *
+ * Bindings inside a `rec { … }` attrset are exempt, because the whole
+ * attrset is externally accessible — a `rec` binding that isn't used
+ * by another binding in the same block may still be used by an
  * external `.attribute` access we cannot see statically.
  *
  * The `body` attribute of a legacy `let { … }` attrset is exempt for
@@ -193,6 +208,7 @@ predicate isUnusedBinding(Scope scope, string name, Identifier defNode) {
   scope.definesName(name, defNode) and
   not exists(NameReference ref | ref.getName() = name and resolvesTo(ref, scope)) and
   not name.regexpMatch("^_.*") and
+  not isCallbackArgName(name) and
   not scope instanceof RecAttrsetExpression and
   not (scope instanceof LetAttrsetExpression and name = "body")
 }
