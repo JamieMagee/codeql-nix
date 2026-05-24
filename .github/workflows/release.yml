@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (must already exist)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish extractor pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Cache cargo registry and target
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: . -> target
+
+      - name: Build extractor pack
+        run: nix develop --command ./scripts/create-extractor-pack.sh
+
+      - name: Determine tag and asset name
+        id: meta
+        run: |
+          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          asset="codeql-extractor-nix-${tag}-linux64.tar.gz"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "asset=${asset}" >> "$GITHUB_OUTPUT"
+
+      - name: Package extractor pack
+        run: |
+          tar -czf "${{ steps.meta.outputs.asset }}" extractor-pack/
+
+      - name: Extract release notes for this tag from CHANGELOG.md
+        id: notes
+        run: |
+          tag="${{ steps.meta.outputs.tag }}"
+          version="${tag#v}"
+          # Pull the section between "## [<version>]" and the next "## [" heading.
+          awk -v ver="$version" '
+            BEGIN { in_section = 0 }
+            /^## \[/ {
+              if (in_section) exit
+              if ($0 ~ "\\[" ver "\\]") in_section = 1
+              else next
+            }
+            in_section { print }
+          ' CHANGELOG.md > /tmp/release-notes.md
+          if [[ ! -s /tmp/release-notes.md ]]; then
+            echo "## ${tag}" > /tmp/release-notes.md
+            echo "" >> /tmp/release-notes.md
+            echo "No matching CHANGELOG entry; see commit history." >> /tmp/release-notes.md
+          fi
+          cat /tmp/release-notes.md
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ steps.meta.outputs.tag }}"
+          asset="${{ steps.meta.outputs.asset }}"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            gh release upload "$tag" "$asset" --clobber
+          else
+            gh release create "$tag" \
+              "$asset" \
+              --title "$tag" \
+              --notes-file /tmp/release-notes.md \
+              --verify-tag
+          fi
