@@ -1,0 +1,5 @@
+| fixture.nix:4:5:4:5 | x | Unused let-binding `x`. |
+| fixture.nix:17:23:17:23 | b | Unused function parameter `b`. |
+| fixture.nix:41:13:41:18 | helper | Unused let-binding `helper`. |
+| fixture.nix:59:23:59:23 | x | Unused function parameter `x`. |
+| fixture.nix:73:5:73:5 | x | Unused let-binding `x`. |

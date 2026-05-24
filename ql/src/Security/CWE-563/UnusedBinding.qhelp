@@ -1,0 +1,60 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A name introduced by a <code>let</code>-binding, a <code>rec</code>-attrset
+binding, an <code>inherit</code> clause, or a function parameter is never
+used in its lexical scope. Unused bindings clutter the code, may indicate a
+forgotten use site, and complicate downstream refactoring.
+</p>
+<p>
+The deadnix-style convention applies: identifiers starting with an
+underscore (e.g. <code>_module</code>, <code>_unused</code>) are
+intentionally exempt. Use the <code>_</code>-prefix to signal that a
+parameter is destructured for documentation or padding but not used.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Remove the unused binding, or rename it with an underscore prefix to
+acknowledge that it is intentionally unused.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — unused <code>let</code>-binding <code>x</code>:</p>
+<sample language="nix">
+let
+  x = 1;
+  y = 2;
+in
+y
+</sample>
+<p>Safe — both bindings are used:</p>
+<sample language="nix">
+let
+  x = 1;
+  y = 2;
+in
+x + y
+</sample>
+<p>Safe — intentionally-unused destructured parameter:</p>
+<sample language="nix">
+{ _module, pkgs, ... }: pkgs
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/astro/deadnix">deadnix</a>: a Nix dead-code
+scanner whose algorithm and underscore-prefix convention this query follows.
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/563.html">CWE-563:
+Assignment to Variable without Use</a>
+</li>
+</references>
+</qhelp>
