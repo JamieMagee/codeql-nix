@@ -1,0 +1,44 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Attributes such as <code>cmakeFlags</code>, <code>mesonFlags</code>,
+<code>configureFlags</code>, and <code>makeFlags</code> are lists of shell
+argv elements. nixpkgs expands these lists through Bash, so a single string
+literal that contains embedded whitespace is split into multiple arguments.
+That silently changes the invoked command line and often breaks the build.
+</p>
+<p>
+This is the same bug class reported by <code>nixpkgs-hammering</code>'s
+<code>no-flags-spaces</code> lint.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Put each flag in its own list element. For example, write
+<code>[ "-DFOO=bar" "-DBAZ=qux" ]</code> instead of
+<code>[ "-DFOO=bar -DBAZ=qux" ]</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — one list element contains two shell words:</p>
+<sample language="nix">
+cmakeFlags = [ "-DFOO=bar baz" ];
+</sample>
+<p>Safe — each flag is a separate list element:</p>
+<sample language="nix">
+cmakeFlags = [ "-DFOO=bar" "-DBAZ=qux" ];
+</sample>
+</example>
+
+<references>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/78.html">CWE-78:
+Improper Neutralization of Special Elements used in an OS Command</a>
+</li>
+</references>
+</qhelp>
