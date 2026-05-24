@@ -1,0 +1,3 @@
+| fixture.nix:5:10:5:31 | ApplyExpression | Call to `builtins.getEnv` reads the host environment and is impure; results depend on environment variable `HOME`. |
+| fixture.nix:6:10:6:31 | ApplyExpression | Call to `builtins.getEnv` reads the host environment and is impure; results depend on environment variable `PATH`. |
+| fixture.nix:9:25:9:37 | ApplyExpression | Call to `builtins.getEnv` reads the host environment and is impure; results depend on environment variable `HOME`. |

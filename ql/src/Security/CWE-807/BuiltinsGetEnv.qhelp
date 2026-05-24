@@ -1,0 +1,62 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+<code>builtins.getEnv</code> reads an environment variable from the host running
+Nix evaluation. That makes evaluation impure and host-dependent, and under
+<code>--pure-eval</code> the call silently returns the empty string instead.
+Values read this way can also leak into derivation hashes or generated outputs.
+</p>
+<p>
+This is a Nix form of CWE-807: trusting mutable external input to influence
+security-relevant or reproducibility-relevant behavior.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Avoid <code>builtins.getEnv</code> in reproducible Nix code. Pass required values
+explicitly as function arguments, module options, or fixed string attributes so
+that evaluation does not depend on the caller's shell environment.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — reads <code>HOME</code> from the evaluator environment:</p>
+<sample language="nix">
+let
+  home = builtins.getEnv "HOME";
+in
+...
+</sample>
+<p>Unsafe — bare <code>getEnv</code> under <code>with builtins;</code>:</p>
+<sample language="nix">
+with builtins;
+getEnv "PATH"
+</sample>
+<p>Safe — thread the value explicitly instead of reading the environment:</p>
+<sample language="nix">
+{ homeDir }:
+let
+  home = homeDir;
+in
+...
+</sample>
+<p>Safe — a different helper named <code>getEnv</code> in another namespace:</p>
+<sample language="nix">
+lib.getEnv "HOME"
+</sample>
+</example>
+
+<references>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/builtins#builtins-getEnv">builtins.getEnv</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/807.html">CWE-807: Reliance on Untrusted Inputs in a Security Decision</a>
+</li>
+</references>
+</qhelp>
