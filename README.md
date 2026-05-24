@@ -3,7 +3,7 @@
 A [CodeQL](https://codeql.github.com) extractor and query pack for the [Nix expression language](https://nix.dev/manual/nix/2.18/language/).
 
 > [!WARNING]
-> Phase 0 — validation spike. Not yet usable. See `docs/phase0-report.md` (TBD) for the go/no-go decision that gates Phase 1.
+> Phase 1 — building the MVP query set. See [`CHANGELOG.md`](./CHANGELOG.md) for details. Phase 0 ([`docs/phase0-report.md`](./docs/phase0-report.md)) validated the pipeline end-to-end.
 
 ## What this is
 
@@ -18,8 +18,8 @@ The initial scope is supply-chain hygiene — the kind of checks `statix` / `dea
 
 | Phase | Status | Scope |
 |---|---|---|
-| **Phase 0** | In progress | One query (`FetchWithoutIntegrity`), full pipeline validated end-to-end |
-| Phase 1 | Not started | 10 MVP syntactic queries |
+| **Phase 0** | ✅ Complete (see [`docs/phase0-report.md`](./docs/phase0-report.md)) | One query (`FetchWithoutIntegrity`), full pipeline validated end-to-end |
+| **Phase 1** | 🚧 In progress | 10 MVP syntactic queries + `v0.1.0` release |
 | Phase 2 | Not started | Data-flow library, shell-injection queries |
 
 ## Building

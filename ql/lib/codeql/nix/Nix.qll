@@ -64,6 +64,56 @@ class Inherit = NIX::Inherit;
 /** An `inherit (expr) a b;` binding. */
 class InheritFrom = NIX::InheritFrom;
 
+/** A `let … in body` expression. */
+class LetExpression = NIX::LetExpression;
+
+/** A legacy `let { body = …; }` expression (deprecated form). */
+class LetAttrsetExpression = NIX::LetAttrsetExpression;
+
+/** A `x: body` or `{ a, b ? … }: body` function expression. */
+class FunctionExpression = NIX::FunctionExpression;
+
+/** The `{ a, b ? …, ... }` formals of a `FunctionExpression`. */
+class Formals = NIX::Formals;
+
+/** A single `a` or `a ? default` formal parameter. */
+class Formal = NIX::Formal;
+
+/** A `with expr; body` expression. */
+class WithExpression = NIX::WithExpression;
+
+/**
+ * A `<...>`-style search-path lookup (e.g. `<nixpkgs>`).
+ *
+ * Represented as a token in tree-sitter-nix; this alias surfaces it
+ * as a first-class expression class for queries.
+ */
+class LookupPath = NIX::SpathExpression;
+
+/**
+ * A bare (unquoted) URI literal token, e.g. `https://example.com`.
+ *
+ * Deprecated by Nix RFC 45 in favour of quoted strings. The bare-URI
+ * lexer pattern is `[a-zA-Z][a-zA-Z0-9+.-]*:[a-zA-Z0-9%/?:@&=+$,_.!~*'-]+`.
+ */
+class BareUriLiteral = NIX::UriExpression;
+
+/** A binary operator expression: `a + b`, `a // b`, `a -> b`, etc. */
+class BinaryExpression = NIX::BinaryExpression;
+
+/** A `${...}` interpolation, both inside strings and inside attrpaths. */
+predicate hasInterpolation(StringExpression s) { s.getChild(_) instanceof Interpolation }
+
+/**
+ * Same as `hasInterpolation` but for indented (two-single-quote) strings.
+ */
+predicate indentedHasInterpolation(IndentedStringExpression s) {
+  s.getChild(_) instanceof Interpolation
+}
+
+/** Holds if `e` is a `<...>`-style search-path lookup. */
+predicate isLookupPath(AstNode e) { e instanceof LookupPath }
+
 /**
  * Holds if `attrset` is either a plain or `rec` attribute set whose
  * top-level bindings include `bindingSet`.
