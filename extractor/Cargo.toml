@@ -1,6 +1,6 @@
 [package]
 name = "codeql-extractor-nix"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Jamie Magee"]
 edition = "2021"
 license = "MIT"

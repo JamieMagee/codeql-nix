@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-05-23 (Phase 1)
+
 ### Added
 
 - `.github/workflows/release.yml`: triggered on `v*` tag pushes. Builds
@@ -68,5 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   assembly and `codeql test run` on push and PR.
 - End-to-end SARIF demo via [`JamieMagee/codeql-nix-testbed`](https://github.com/JamieMagee/codeql-nix-testbed).
 
-[Unreleased]: https://github.com/JamieMagee/codeql-nix/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/JamieMagee/codeql-nix/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/JamieMagee/codeql-nix/releases/tag/v0.1.0
 [0.0.1]: https://github.com/JamieMagee/codeql-nix/releases/tag/v0.0.1
