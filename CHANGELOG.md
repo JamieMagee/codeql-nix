@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ql/src/Security/CWE-829/UnpinnedImportFetch.ql` (CWE-829, CWE-094): detects
   `import` of unpinned fetcher results, where network-controlled content is
   fetched and immediately evaluated as Nix code.
+- `ql/src/Security/CWE-078/SpaceInFlagString.ql` (plus qhelp and tests) to detect flag-list string literals with embedded whitespace that Bash word-splits into multiple argv entries.
 - Phase 1 library expansion:
   - `ql/lib/codeql/nix/Builtins.qll` — `BuiltinCall` class recognising
     `builtins.X` invocations and (best-effort) bare `X` references
