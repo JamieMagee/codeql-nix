@@ -1,0 +1,5 @@
+| fixture.nix:5:13:10:3 | BinaryExpression | Merging a `rec { ... }` attrset (on the left-hand side) with `//` creates surprising semantics: recursive references in the `rec` block do NOT see attributes from the other operand. |
+| fixture.nix:13:14:18:3 | BinaryExpression | Merging a `rec { ... }` attrset (on the right-hand side) with `//` creates surprising semantics: recursive references in the `rec` block do NOT see attributes from the other operand. |
+| fixture.nix:21:13:25:3 | BinaryExpression | Merging a `rec { ... }` attrset (on the left-hand side) with `//` creates surprising semantics: recursive references in the `rec` block do NOT see attributes from the other operand. |
+| fixture.nix:21:13:25:3 | BinaryExpression | Merging a `rec { ... }` attrset (on the right-hand side) with `//` creates surprising semantics: recursive references in the `rec` block do NOT see attributes from the other operand. |
+| fixture.nix:28:26:33:3 | BinaryExpression | Merging a `rec { ... }` attrset (on the left-hand side) with `//` creates surprising semantics: recursive references in the `rec` block do NOT see attributes from the other operand. |
