@@ -1,0 +1,73 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Importing the result of an unpinned fetcher call causes Nix to download and
+then evaluate code from a mutable network source. If an attacker can tamper
+with the URL, repository, or transport, they can supply arbitrary Nix code
+that runs during evaluation.
+</p>
+<p>
+This is the Nix analogue of checking out an untrusted GitHub Action ref, but
+with a more direct impact: the fetched tarball is fed straight into
+<code>import</code>. That makes this both a supply-chain issue (CWE-829) and
+an arbitrary-code-evaluation risk (CWE-094).
+</p>
+</overview>
+
+<recommendation>
+<p>
+Do not <code>import</code> directly from a network fetch unless the fetcher is
+content-pinned. For tarballs and files, provide <code>sha256</code>,
+<code>narHash</code>, or <code>hash</code>. For git-based helpers, also pin
+<code>rev</code> to a specific commit. Prefer local paths for generated or
+vendored Nix files.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — <code>import</code> of an unpinned tarball:</p>
+<sample language="nix">
+import (builtins.fetchTarball "https://example.com/modules.tar.gz")
+</sample>
+<p>Unsafe — missing hash on a fetcher attrset:</p>
+<sample language="nix">
+import (pkgs.fetchurl {
+  url = "https://example.com/default.nix";
+})
+</sample>
+<p>Safe — content-pinned fetch before import:</p>
+<sample language="nix">
+import (builtins.fetchTarball {
+  url = "https://example.com/modules.tar.gz";
+  sha256 = "0000000000000000000000000000000000000000000000000000";
+})
+</sample>
+<p>Safe — local path import:</p>
+<sample language="nix">
+import ./default.nix
+</sample>
+</example>
+
+<references>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/builtins#builtins-import">import</a>
+</li>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/builtins#builtins-fetchTarball">
+builtins.fetchTarball</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/829.html">CWE-829:
+Inclusion of Functionality from Untrusted Control Sphere</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/94.html">CWE-94:
+Improper Control of Generation of Code ('Code Injection')</a>
+</li>
+</references>
+</qhelp>

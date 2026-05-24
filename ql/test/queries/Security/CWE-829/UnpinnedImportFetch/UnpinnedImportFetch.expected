@@ -1,0 +1,4 @@
+| fixture.nix:3:4:3:64 | ApplyExpression | `import` of unpinned `fetchTarball`: bare-string fetcher argument has no content hash. Network-controlled code is evaluated at import time. |
+| fixture.nix:6:4:8:4 | ApplyExpression | `import` of unpinned `fetchTarball`: fetcher attrset has no `sha256`, `narHash`, or `hash` attribute. Network-controlled code is evaluated at import time. |
+| fixture.nix:11:4:11:55 | ApplyExpression | `import` of unpinned `fetchTarball`: bare-string fetcher argument has no content hash. Network-controlled code is evaluated at import time. |
+| fixture.nix:14:4:16:4 | ApplyExpression | `import` of unpinned `fetchurl`: fetcher attrset has no `sha256`, `narHash`, or `hash` attribute. Network-controlled code is evaluated at import time. |

@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   calls under `with builtins;` because they read the host environment during
   evaluation.
 - `DeprecatedUriLiteral.ql` (CWE-477): flags bare URI literals deprecated by Nix RFC 45 and recommends quoted strings.
+- `ql/src/Security/CWE-829/UnpinnedImportFetch.ql` (CWE-829, CWE-094): detects
+  `import` of unpinned fetcher results, where network-controlled content is
+  fetched and immediately evaluated as Nix code.
 - Phase 1 library expansion:
   - `ql/lib/codeql/nix/Builtins.qll` — `BuiltinCall` class recognising
     `builtins.X` invocations and (best-effort) bare `X` references
