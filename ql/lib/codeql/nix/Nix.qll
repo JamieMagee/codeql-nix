@@ -19,6 +19,9 @@ class Expr = NIX::UnderscoreExpression;
 /** A function application: `f x` or `f { ... }`. */
 class ApplyExpression = NIX::ApplyExpression;
 
+/** A parenthesised expression: `(expr)`. */
+class ParenthesizedExpression = NIX::ParenthesizedExpression;
+
 /** A `select` expression: `expr.attr`, `expr.attr or default`. */
 class SelectExpression = NIX::SelectExpression;
 
