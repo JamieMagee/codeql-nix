@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `.github/workflows/release.yml`: triggered on `v*` tag pushes. Builds
+  the extractor pack, packages it as `codeql-extractor-nix-vX.Y.Z-linux64.tar.gz`,
+  pulls the matching CHANGELOG section as release notes, and creates a
+  GitHub Release with the tarball as an asset.
 - `ql/lib/codeql/nix/Scope.qll`: lexical scope library porting deadnix's
   fixpoint scope analysis to QL. Exposes `Scope`, `NameReference`,
   `resolvesTo`, and `isUnusedBinding` predicates handling let-bindings,
