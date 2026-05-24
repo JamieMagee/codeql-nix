@@ -1,0 +1,3 @@
+| fixture.nix:3:17:3:25 | <nixpkgs> | <...>-style lookup path '<nixpkgs>' depends on the ambient $NIX_PATH and is not reproducible. |
+| fixture.nix:6:28:6:36 | <nixpkgs> | <...>-style lookup path '<nixpkgs>' depends on the ambient $NIX_PATH and is not reproducible. |
+| fixture.nix:9:10:9:19 | <unstable> | <...>-style lookup path '<unstable>' depends on the ambient $NIX_PATH and is not reproducible. |

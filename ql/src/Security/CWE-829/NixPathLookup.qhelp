@@ -1,0 +1,65 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A lookup path literal such as <code>&lt;nixpkgs&gt;</code> or <code>&lt;unstable&gt;</code>
+resolves through the ambient <code>$NIX_PATH</code> / <code>builtins.nixPath</code>
+search path instead of a repository-local or content-pinned source. Different
+machines, shells, channels, or evaluation moments can therefore resolve the
+same expression to different code.
+</p>
+<p>
+This is the Nix analogue of importing code through a mutable tag or alias
+instead of a pinned commit SHA (CWE-829). It breaks reproducibility and can
+silently change what gets evaluated.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Replace lookup paths with explicit local paths such as <code>./local-path</code>,
+flake inputs, or content-pinned fetches such as <code>builtins.fetchTarball</code>
+with a hash. Avoid depending on the caller's <code>$NIX_PATH</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — importing from the ambient search path:</p>
+<sample language="nix">
+import &lt;nixpkgs&gt; { }
+</sample>
+<p>Unsafe — a bare lookup path reference:</p>
+<sample language="nix">
+&lt;unstable&gt;
+</sample>
+<p>Safe — import a repository-local path instead:</p>
+<sample language="nix">
+import ./local-path
+</sample>
+<sample language="nix">
+import (builtins.fetchTarball {
+  url = "https://example.com/x.tar.gz";
+  sha256 = "0000000000000000000000000000000000000000000000000000";
+})
+</sample>
+</example>
+
+<references>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/constructs/lookup-path">
+Lookup path</a>
+</li>
+<li>
+Nix Reference Manual:
+<a href="https://nix.dev/manual/nix/latest/language/builtins#builtins-nixPath">
+builtins.nixPath</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/829.html">CWE-829:
+Inclusion of Functionality from Untrusted Control Sphere</a>
+</li>
+</references>
+</qhelp>
