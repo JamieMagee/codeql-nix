@@ -1,0 +1,2 @@
+| fixture.nix:3:10:3:26 | LetAttrsetExpression | Deprecated `let { ... }` attrset syntax; use `let ... in ...` (modern let-in) instead. |
+| fixture.nix:6:10:6:33 | LetAttrsetExpression | Deprecated `let { ... }` attrset syntax; use `let ... in ...` (modern let-in) instead. |
