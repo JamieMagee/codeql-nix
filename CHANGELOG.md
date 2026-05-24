@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `ql/lib/codeql/nix/Scope.qll`: lexical scope library porting deadnix's
+  fixpoint scope analysis to QL. Exposes `Scope`, `NameReference`,
+  `resolvesTo`, and `isUnusedBinding` predicates handling let-bindings,
+  let-attrset bindings, function formals + universal, and inherit
+  clauses (with correct outer-scope resolution for `inherit name;`).
+- `ql/src/Security/CWE-563/UnusedBinding.ql`: reports defined names
+  that have no in-scope reference. Skips `rec { }` and the legacy
+  `let { body = …; }`'s `body` attribute (both externally visible);
+  exempts identifiers starting with `_` (deadnix convention).
 - `BuiltinsGetEnv.ql` (CWE-807): flags `builtins.getEnv` and bare `getEnv`
   calls under `with builtins;` because they read the host environment during
   evaluation.
