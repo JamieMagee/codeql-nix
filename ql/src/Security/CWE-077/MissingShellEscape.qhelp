@@ -1,0 +1,47 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A <code>${expr}</code> interpolation inside one of <code>mkDerivation</code>'s
+shell-context attributes is not passed through <code>lib.escapeShellArg</code>
+(or an equivalent sanitizer). The build wrapper evaluates phase strings as
+Bash, so any unsanitized interpolation is potentially subject to word-splitting
+or shell-metacharacter injection.
+</p>
+<p>
+This query is the conservative counterpart of <code>nix/shell-injection-in-build-phase</code>:
+where the latter reports flows from specific untrusted sources, this one
+flags <em>every</em> interpolation that lacks a sanitizer, regardless of
+where the value comes from.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Wrap any interpolated value with <code>lib.escapeShellArg</code> if there's
+any plausible path by which it could include shell metacharacters or
+whitespace.
+</p>
+</recommendation>
+
+<example>
+<sample language="nix">
+{ stdenv, lib, pname }:
+stdenv.mkDerivation {
+  inherit pname;
+  buildPhase = ''
+    ./configure --name=${lib.escapeShellArg pname}
+  '';
+}
+</sample>
+</example>
+
+<references>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/77.html">CWE-77</a>,
+<a href="https://cwe.mitre.org/data/definitions/78.html">CWE-78</a>
+</li>
+</references>
+</qhelp>

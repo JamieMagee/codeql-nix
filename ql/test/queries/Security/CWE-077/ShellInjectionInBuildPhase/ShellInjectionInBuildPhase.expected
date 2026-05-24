@@ -1,0 +1,5 @@
+| fixture.nix:8:32:8:38 | VariableExpression | Untrusted value from $@ flows into a shell-context interpolation without `lib.escapeShellArg` (or equivalent). | fixture.nix:8:32:8:38 | VariableExpression | VariableExpression |
+| fixture.nix:20:34:20:36 | VariableExpression | Untrusted value from $@ flows into a shell-context interpolation without `lib.escapeShellArg` (or equivalent). | fixture.nix:17:15:17:21 | VariableExpression | VariableExpression |
+| fixture.nix:27:18:27:51 | BinaryExpression | Untrusted value from $@ flows into a shell-context interpolation without `lib.escapeShellArg` (or equivalent). | fixture.nix:27:45:27:51 | VariableExpression | VariableExpression |
+| fixture.nix:34:24:34:28 | VariableExpression | Untrusted value from $@ flows into a shell-context interpolation without `lib.escapeShellArg` (or equivalent). | fixture.nix:34:24:34:28 | VariableExpression | VariableExpression |
+| fixture.nix:76:34:76:38 | VariableExpression | Untrusted value from $@ flows into a shell-context interpolation without `lib.escapeShellArg` (or equivalent). | fixture.nix:76:34:76:38 | VariableExpression | VariableExpression |

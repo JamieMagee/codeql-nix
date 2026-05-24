@@ -1,0 +1,72 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A <code>${expr}</code> interpolation inside one of <code>mkDerivation</code>'s
+shell-context attributes — <code>buildPhase</code>, <code>installPhase</code>,
+<code>postInstall</code>, <code>configurePhase</code>, etc. — uses a value
+that flows from an untrusted source: a function formal whose name is not
+in the conventionally-trusted nixpkgs vocabulary, the result of
+<code>builtins.fetch*</code> or <code>builtins.getEnv</code>, or the result
+of an <code>import</code> call.
+</p>
+<p>
+If an attacker can influence the source value (e.g. by editing a derivation
+caller's argument), they can break out of the interpolation and inject
+arbitrary shell commands. nixpkgs's <code>lib.escapeShellArg</code> is the
+standard defence; wrap any externally-sourced value with it before placing
+it inside a shell-context string.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Wrap the interpolated value with <code>lib.escapeShellArg</code> (or
+<code>lib.escapeShellArgs</code> for arrays) before placing it inside a
+shell-context string.
+</p>
+</recommendation>
+
+<example>
+<p>Unsafe — a function formal flows directly into a build-phase string:</p>
+<sample language="nix">
+{ stdenv, lib, version }:
+stdenv.mkDerivation {
+  pname = "demo";
+  inherit version;
+  buildPhase = ''
+    ./configure --version="${version}"
+  '';
+}
+</sample>
+<p>Safe — the value is escaped before interpolation:</p>
+<sample language="nix">
+{ stdenv, lib, version }:
+stdenv.mkDerivation {
+  pname = "demo";
+  inherit version;
+  buildPhase = ''
+    ./configure --version=${lib.escapeShellArg version}
+  '';
+}
+</sample>
+</example>
+
+<references>
+<li>
+nixpkgs Reference Manual:
+<a href="https://nixos.org/manual/nixpkgs/stable/#sec-functions-library-strings">
+lib.escapeShellArg</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/77.html">CWE-77:
+Improper Neutralization of Special Elements used in a Command</a>
+</li>
+<li>
+CWE: <a href="https://cwe.mitre.org/data/definitions/78.html">CWE-78:
+Improper Neutralization of Special Elements used in an OS Command</a>
+</li>
+</references>
+</qhelp>

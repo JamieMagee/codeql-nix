@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ql/lib/codeql/nix/Taint.qll`: a lightweight taint-tracking library
+  targeting the shell-injection use case. Defines `Source` (untrusted
+  function formals via a nixpkgs-aware allow-list, `builtins.fetch*`,
+  `builtins.getEnv`, `import`), `Sink` (interpolations and direct
+  bindings to shell-context attributes), `Sanitizer`
+  (`lib.escapeShellArg`/`lib.escapeShellArgs`), and `flowsTo` /
+  `isReachableFromSanitizer` predicates. Self-contained — does NOT
+  depend on `DataFlow::InputSig` (that's a Phase 3 project).
+- `ql/src/Security/CWE-077/ShellInjectionInBuildPhase.ql` (CWE-077,
+  CWE-078): reports flows from untrusted sources into shell-context
+  attribute interpolations without `lib.escapeShellArg`.
+- `ql/src/Security/CWE-077/MissingShellEscape.ql` (CWE-077, CWE-078):
+  reports any shell-context interpolation that is not preceded by a
+  sanitizer call. The defensive-coding counterpart of the above.
+- `Scope.qll`: `isCallbackArgName` predicate exempting `finalAttrs`,
+  `prevAttrs`, and `oldAttrs` from `UnusedBinding` (deadnix convention).
+
 ## [0.1.0] — 2026-05-23 (Phase 1)
 
 ### Added
