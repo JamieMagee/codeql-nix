@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `LookupPath`, `BareUriLiteral`, `BinaryExpression`), plus
     `hasInterpolation`, `indentedHasInterpolation`, `isLookupPath`
     predicates.
+- `NixPathLookup.ql` (CWE-829): detects `<...>`-style search-path lookups
+  that depend on the ambient `$NIX_PATH`.
 - `CHANGELOG.md` and `CONTRIBUTING.md`.
 - `ql/src/Security/CWE-477/LegacyLetAttrset.ql` (CWE-477): flags the deprecated
   legacy `let { body = …; }` attrset syntax and recommends modern
