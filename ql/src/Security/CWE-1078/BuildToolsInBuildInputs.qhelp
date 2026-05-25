@@ -1,0 +1,64 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A derivation declares a build-only tool such as <code>cmake</code>,
+<code>meson</code>, or <code>pkg-config</code> in <code>buildInputs</code>.
+In nixpkgs, tools that run during the build normally belong in
+<code>nativeBuildInputs</code> so they target the build platform rather than the
+package's host platform.
+</p>
+<p>
+The distinction matters most when cross-compiling, and also in packages that
+set <code>strictDeps = true;</code>. Leaving build tools in
+<code>buildInputs</code> can make the package harder to cross-build and obscures
+which dependencies are true runtime inputs.
+</p>
+<p>
+There are exceptions, such as IDE or developer environments that intentionally
+need the tool available at runtime. In those cases, keeping the tool in
+<code>buildInputs</code> can be reasonable; otherwise it should move.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Move the tool from <code>buildInputs</code> to <code>nativeBuildInputs</code>.
+Keep ordinary runtime libraries such as <code>openssl</code> in
+<code>buildInputs</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — a build tool is declared in <code>buildInputs</code>:</p>
+<sample language="nix">
+{ stdenv, cmake }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  buildInputs = [ cmake ];
+}
+</sample>
+<p>Recommended — build tools belong in <code>nativeBuildInputs</code>:</p>
+<sample language="nix">
+{ stdenv, cmake }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  nativeBuildInputs = [ cmake ];
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/build-tools-in-build-inputs.md">
+<code>nixpkgs-hammering</code> explanation: <code>build-tools-in-build-inputs</code></a>
+</li>
+<li>
+<a href="https://nixos.org/manual/nixpkgs/stable/#chap-cross">Nixpkgs manual: cross compilation</a>
+</li>
+</references>
+</qhelp>

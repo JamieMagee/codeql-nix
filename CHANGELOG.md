@@ -79,6 +79,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `nixpkgs-hammering`'s `unnecessary-parallel-building` rule. Flags
   redundant `enableParallelBuilding = true;` when Meson, CMake, or qmake
   already enables parallel builds through the default configure hook.
+- `ql/src/Security/CWE-1078/BuildToolsInBuildInputs.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/BuildToolsInBuildInputs/`): ports
+  `nixpkgs-hammering`'s `build-tools-in-build-inputs` rule. Flags
+  build-only tooling declared in `buildInputs` and recommends moving it
+  to `nativeBuildInputs`.
 
 ### Changed
 
