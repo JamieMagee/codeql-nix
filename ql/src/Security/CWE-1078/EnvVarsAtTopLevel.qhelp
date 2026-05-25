@@ -1,0 +1,64 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Some attributes accepted by <code>stdenv.mkDerivation</code> are really builder
+environment variables. Declaring them as top-level derivation attributes works,
+but it blurs the line between structured derivation arguments and environment
+customization.
+</p>
+<p>
+In nixpkgs, these variables should instead live under the <code>env</code>
+attribute. That keeps environment mutation explicit and matches the convention
+enforced by <code>nixpkgs-hammering</code>'s
+<code>environment-variables-go-to-env</code> lint.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Move the flagged binding into the <code>env</code> attribute set. For example,
+write <code>env = { NIX_CFLAGS_COMPILE = "-O3"; };</code> instead of declaring
+<code>NIX_CFLAGS_COMPILE</code> directly at the top level of the derivation.
+</p>
+<p>
+If the current value is a list, rewrite it as an explicit string first.
+Unlike top-level derivation attributes, <code>env</code> is intended for
+string-valued environment variables.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — the environment variable is declared at the top level:</p>
+<sample language="nix">
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  NIX_CFLAGS_COMPILE = "-O3";
+}
+</sample>
+<p>Recommended — move it under <code>env</code>:</p>
+<sample language="nix">
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  env = {
+    NIX_CFLAGS_COMPILE = "-O3";
+  };
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/environment-variables-go-to-env.md">
+<code>nixpkgs-hammering</code> explanation: <code>environment-variables-go-to-env</code></a>
+</li>
+<li>
+<a href="https://nixos.mayflower.consulting/blog/2020/01/20/structured-attrs/">
+Structured attributes in Nixpkgs</a>
+</li>
+</references>
+</qhelp>
