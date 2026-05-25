@@ -59,6 +59,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   derivations that repeat a package from `propagatedBuildInputs` in
   `checkInputs` or `nativeCheckInputs`, where the check-time copy is
   redundant.
+- `ql/src/Security/CWE-1078/AttributeOrdering.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/AttributeOrdering/`): ports
+  `nixpkgs-hammering`'s `attribute-ordering` rule. Flags derivation
+  attributes that appear before the canonical predecessor they should
+  follow, while ignoring unknown attributes and `inherit` clauses.
 
 ### Changed
 
