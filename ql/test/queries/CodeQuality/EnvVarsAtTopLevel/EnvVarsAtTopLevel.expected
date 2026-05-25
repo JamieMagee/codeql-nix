@@ -1,0 +1,3 @@
+| fixture.nix:12:5:12:31 | Binding | Environment variable `NIX_CFLAGS_COMPILE` should be moved under `env` instead of being passed directly to this derivation. |
+| fixture.nix:19:5:19:36 | Binding | Environment variable `PKG_CONFIG_PATH` should be moved under `env` instead of being passed directly to this derivation. |
+| fixture.nix:50:5:50:26 | Binding | Environment variable `NIX_LDFLAGS` should be moved under `env` instead of being passed directly to this derivation. |

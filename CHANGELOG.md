@@ -69,6 +69,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `nixpkgs-hammering`'s `unclear-gpl` rule. Flags deprecated ambiguous
   GNU license aliases in derivation `meta.license` bindings and
   recommends the explicit `Only` / `Plus` variant instead.
+- `ql/src/Security/CWE-1078/EnvVarsAtTopLevel.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/EnvVarsAtTopLevel/`): ports
+  `nixpkgs-hammering`'s `environment-variables-go-to-env` rule. Flags
+  selected environment variables declared as top-level derivation
+  attributes and recommends moving them under `env`.
 
 ### Changed
 
