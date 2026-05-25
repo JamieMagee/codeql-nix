@@ -1,0 +1,65 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+When a derivation overrides <code>configurePhase</code>, <code>buildPhase</code>,
+<code>checkPhase</code>, or <code>installPhase</code>, it is expected to keep the
+matching <code>runHook preX</code> and <code>runHook postX</code> calls from the
+standard nixpkgs phase implementation.
+</p>
+<p>
+Those hooks are how setup hooks, package-local customisation, and
+<code>overrideAttrs</code> extensions splice extra work into a phase. Omitting one
+can silently skip required build logic even when the phase body itself looks
+correct.
+</p>
+</overview>
+
+<recommendation>
+<p>
+If you need a custom phase body, add <code>runHook preX</code> near the start of the
+phase and <code>runHook postX</code> near the end, with <code>X</code> matching the phase
+name. If you only need to tweak the default command, prefer the dedicated flag
+attributes or smaller hook attributes over replacing the whole phase.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — custom <code>installPhase</code> forgets the post hook:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  installPhase = ''
+    runHook preInstall
+    make install
+  '';
+}
+</sample>
+<p>Recommended — preserve both extension points:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  installPhase = ''
+    runHook preInstall
+    make install
+    runHook postInstall
+  '';
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/missing-phase-hooks.md"><code>nixpkgs-hammering</code> explanation: <code>missing-phase-hooks</code></a>
+</li>
+<li>
+<a href="https://github.com/NixOS/nixpkgs/issues/175605">Relevant nixpkgs issue</a>
+</li>
+</references>
+</qhelp>

@@ -1,0 +1,2 @@
+| fixture.nix:9:5:9:14 | buildPhase | `buildPhase` overrides the default phase but is missing `runHook preBuild` and `runHook postBuild`. |
+| fixture.nix:15:5:15:16 | installPhase | `installPhase` overrides the default phase but is missing `runHook postInstall`. |
