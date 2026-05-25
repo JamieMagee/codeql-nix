@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `nixpkgs-hammering`'s `fixup-phase` and `patch-phase` rules. Flags
   derivations that override `fixupPhase` or `patchPhase` directly
   instead of extending the default phase with `pre*` / `post*` hooks.
+- `ql/src/Security/CWE-1078/MissingPhaseHooks.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/MissingPhaseHooks/`): ports
+  `nixpkgs-hammering`'s `missing-phase-hooks` rule for
+  `configurePhase`, `buildPhase`, `checkPhase`, and `installPhase`.
+  Flags string-literal phase overrides that omit the corresponding
+  `runHook preX` and/or `runHook postX` calls.
 
 ### Changed
 
