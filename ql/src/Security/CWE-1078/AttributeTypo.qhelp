@@ -1,0 +1,59 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A top-level derivation attribute looks like a typo of a known
+<code>stdenv.mkDerivation</code> or Python-wrapper attribute.
+</p>
+<p>
+This query is deliberately narrow: it only reports case-only mistakes
+(such as <code>pName</code> for <code>pname</code>) and a curated set of common
+transpositions and misspellings (such as <code>configFlags</code> for
+<code>configureFlags</code>). Unknown custom attributes are otherwise left
+alone to keep the signal high.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Rename the attribute to the suggested canonical spelling. If the name is
+intentional and package-local, prefer an underscore-prefixed helper
+attribute (for example <code>_helper</code>) or move package metadata under
+<code>meta</code> instead of adding an accidental top-level derivation key.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — likely typos:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pName = "demo";
+  version = "1.0";
+  configFlags = [ "--enable-foo" ];
+}
+</sample>
+<p>Recommended — use the canonical attribute names:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  configureFlags = [ "--enable-foo" ];
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/attribute-typo.md">
+<code>nixpkgs-hammering</code> explanation: <code>attribute-typo</code></a>
+</li>
+<li>
+<a href="https://nixos.org/manual/nixpkgs/stable/#sec-using-stdenv">
+Nixpkgs manual: <code>stdenv.mkDerivation</code></a>
+</li>
+</references>
+</qhelp>
