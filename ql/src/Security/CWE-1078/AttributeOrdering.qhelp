@@ -1,0 +1,63 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Many nixpkgs maintainers prefer a stable top-level attribute order in
+<code>mkDerivation</code>-style expressions so updates and reviews are easier.
+This query ports <code>nixpkgs-hammering</code>'s
+<code>attribute-ordering</code> rule.
+</p>
+<p>
+Only attributes in the canonical nixpkgs order are considered. Unknown
+attributes are ignored, so local helper bindings can be interspersed without
+constraining the order of known attributes.
+</p>
+<p>
+Keeping <code>pname</code>, <code>version</code>, sources, dependencies, phase
+controls, and <code>meta</code> in a predictable order makes package expressions
+faster to scan and less error-prone to edit.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Move the reported attribute so it appears after the named predecessor and before
+later canonical sections. Follow the canonical order used by
+<code>nixpkgs-hammering</code>: package identity first, then sources,
+dependencies, build flags, phase toggles and overrides, and finally
+<code>passthru</code> and <code>meta</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — <code>version</code> appears before <code>pname</code>:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  version = "1.0";
+  pname = "demo";
+}
+</sample>
+<p>Recommended — keep the canonical order:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/attribute-ordering.md">
+<code>nixpkgs-hammering</code> explanation: <code>attribute-ordering</code></a>
+</li>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/lib/derivation-attributes.nix">
+<code>nixpkgs-hammering</code> canonical derivation attribute order list</a>
+</li>
+</references>
+</qhelp>
