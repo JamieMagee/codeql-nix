@@ -1,7 +1,7 @@
 library: true
 warnOnImplicitThis: false
 name: jamiemagee/nix-all
-version: 0.2.0
+version: 0.3.0
 dbscheme: nix.dbscheme
 extractor: nix
 dependencies:

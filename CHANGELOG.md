@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-05-25 (Phase 3a)
+
 ### Added
 
 - `ql/lib/codeql/nix/Derivation.qll`: recognises calls to nixpkgs-style
@@ -84,13 +86,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `nixpkgs-hammering`'s `build-tools-in-build-inputs` rule. Flags
   build-only tooling declared in `buildInputs` and recommends moving it
   to `nativeBuildInputs`.
+- `ql/src/codeql-suites/nix-code-quality.qls`: new suite that bundles
+  the Phase 3a `nixpkgs-hammering` ports for opt-in style/quality
+  scanning. Disjoint by tag from `nix-code-scanning.qls`.
 
 ### Changed
 
 - `ql/src/codeql-suites/nix-code-scanning.qls`: now excludes queries
   tagged `quality`. Existing queries (tagged `maintainability` /
-  `correctness`) are unaffected; Phase 3a quality lints will be picked
-  up by the new `nix-code-quality.qls` suite instead.
+  `correctness`) are unaffected; Phase 3a quality lints are picked up
+  by the new `nix-code-quality.qls` suite instead.
 
 ## [0.2.0] — 2026-05-24 (Phase 2)
 

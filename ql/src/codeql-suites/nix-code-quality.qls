@@ -1,0 +1,5 @@
+- description: "Nix code-quality and style lints (nixpkgs-hammering port)"
+- queries: .
+  from: jamiemagee/nix-queries
+- include:
+    tags contain: quality
