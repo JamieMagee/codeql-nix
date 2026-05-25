@@ -31,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   set `name` and `version` without `pname`; includes a CodeQuality qltest
   fixture covering direct, `inherit`, callback, and `buildPythonPackage`
   forms.
+- `ql/src/Security/CWE-1078/ExplicitPhases.ql` plus qhelp and query tests:
+  ports nixpkgs-hammering's `explicit-phases` rule, reporting direct
+  overrides of `configurePhase`, `buildPhase`, `checkPhase`, and
+  `installPhase` while leaving hook-based customization and unrelated
+  phases to their dedicated rules.
 
 ### Changed
 

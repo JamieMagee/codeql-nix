@@ -1,0 +1,74 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A derivation directly overrides one of <code>configurePhase</code>,
+<code>buildPhase</code>, <code>checkPhase</code>, or
+<code>installPhase</code>. Replacing an entire stdenv phase bypasses the
+default implementation and any setup-hook behavior layered onto it.
+</p>
+<p>
+In nixpkgs, the supported extension points are usually the corresponding
+<code>preX</code> and <code>postX</code> hooks (for example,
+<code>preBuild</code> / <code>postBuild</code>), plus the phase-specific
+flags and helper attributes exposed by the generic builder.
+</p>
+<p>
+This query intentionally reports the presence of the explicit override
+itself, even if the replacement body manually calls
+<code>runHook preX</code> / <code>runHook postX</code>. Missing hook calls are
+covered by a separate rule.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Prefer the corresponding <code>preX</code> / <code>postX</code> hooks and the
+builder's existing flags over fully replacing the phase. Only override the
+whole phase when the default implementation is genuinely unsuitable.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+
+  buildPhase = ''
+    make all
+  '';
+}
+</sample>
+<p>Preferred:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+
+  preBuild = ''
+    echo "preparing build"
+  '';
+
+  postBuild = ''
+    echo "build finished"
+  '';
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/explicit-phases.md">nixpkgs-hammering: explicit-phases</a>
+</li>
+<li>
+Nixpkgs Manual:
+<a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-controlling-phases">Controlling phases</a>
+</li>
+</references>
+</qhelp>
