@@ -1,0 +1,78 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Meson, CMake, and qmake setup hooks already enable parallel building for the
+standard configure phase. When a derivation also sets
+<code>enableParallelBuilding = true;</code>, the attribute is redundant and adds
+noise without changing the build.
+</p>
+<p>
+This only holds while the default hook-driven configure phase is still in use.
+If the derivation overrides <code>configurePhase</code>, or explicitly disables the
+relevant hook with <code>dontUseMesonConfigure</code>,
+<code>dontUseCmakeConfigure</code>, or <code>dontUseQmakeConfigure</code>, then an
+explicit <code>enableParallelBuilding</code> may still be necessary.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Remove <code>enableParallelBuilding = true;</code> from derivations that already
+use Meson, CMake, or qmake through the default configure hook. Keep the binding
+only when you intentionally bypass or disable that hook.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — CMake already enables parallel building:</p>
+<sample language="nix">
+{ stdenv, cmake }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  enableParallelBuilding = true;
+  nativeBuildInputs = [ cmake ];
+}
+</sample>
+<p>Recommended — rely on the setup hook:</p>
+<sample language="nix">
+{ stdenv, cmake }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  nativeBuildInputs = [ cmake ];
+}
+</sample>
+<p>Safe — custom configure phase, so the explicit opt-in may be needed:</p>
+<sample language="nix">
+{ stdenv, cmake }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  enableParallelBuilding = true;
+  nativeBuildInputs = [ cmake ];
+  configurePhase = ''
+    runHook preConfigure
+    cmake -S . -B build
+    runHook postConfigure
+  '';
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/unnecessary-parallel-building.md">
+<code>nixpkgs-hammering</code> explanation: <code>unnecessary-parallel-building</code></a>
+</li>
+<li>
+Nixpkgs setup hooks:
+<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/build-managers/meson/setup-hook.sh">Meson</a>,
+<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/build-managers/cmake/setup-hook.sh">CMake</a>,
+<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/libraries/qt-5/hooks/qmake-hook.sh">qmake</a>
+</li>
+</references>
+</qhelp>
