@@ -1,0 +1,65 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A derivation declares both <code>meson</code> and <code>cmake</code> in
+<code>nativeBuildInputs</code>. In nixpkgs, these are alternative
+configure-phase build systems and most packages should pick one.
+</p>
+<p>
+When both are present, the Meson setup usually wins and the CMake setup is
+skipped, so the extra tool only increases the closure and can mislead readers
+into thinking both build systems are required.
+</p>
+<p>
+There are exceptions: mixed-build-system subprojects, or Meson dependencies
+that can only be located through CMake's <code>find_package</code> fallback.
+If one of those applies, keep both tools but add a nearby comment explaining
+why.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Remove the unused tool from <code>nativeBuildInputs</code>. Usually that means
+keeping only <code>meson</code> for a Meson package, or only <code>cmake</code>
+for a CMake package. If both are genuinely required, document the exception in
+code.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — both build systems are declared:</p>
+<sample language="nix">
+{ stdenv, meson, cmake }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  nativeBuildInputs = [ meson cmake ];
+}
+</sample>
+<p>Recommended — keep only the primary build system:</p>
+<sample language="nix">
+{ stdenv, meson }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  nativeBuildInputs = [ meson ];
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/meson-cmake.md">
+<code>nixpkgs-hammering</code> explanation: <code>meson-cmake</code></a>
+</li>
+<li>
+Meson documentation:
+<a href="https://mesonbuild.com/CMake-module.html#cmake-subprojects">CMake subprojects</a>,
+<a href="https://mesonbuild.com/Release-notes-for-0-49-0.html#cmake-find_package-dependency-backend">CMake <code>find_package</code> fallback</a>
+</li>
+</references>
+</qhelp>

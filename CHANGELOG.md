@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   derivation-call shapes including callback, callback+rec, callback+let,
   parens, plain rec, both Python wrappers, and `inherit` / inherit-from
   cases.
+- `ql/src/Security/CWE-1078/MesonAndCmake.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/MesonAndCmake/`): ports
+  `nixpkgs-hammering`'s `meson-cmake` rule. Flags derivations whose
+  `nativeBuildInputs` declare both `meson` and `cmake`, where nixpkgs
+  convention is to pick one primary configure-phase build system.
 
 ### Changed
 
