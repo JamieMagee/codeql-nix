@@ -1,0 +1,3 @@
+| fixture.nix:10:20:10:36 | SelectExpression | `gpl2` is a deprecated ambiguous GNU license alias. Use `gpl2Only` or `gpl2Plus` as appropriate. |
+| fixture.nix:18:17:18:33 | SelectExpression | `gpl3` is a deprecated ambiguous GNU license alias. Use `gpl3Only` or `gpl3Plus` as appropriate. |
+| fixture.nix:26:41:26:44 | VariableExpression | `gpl2` is a deprecated ambiguous GNU license alias. Use `gpl2Only` or `gpl2Plus` as appropriate. |
