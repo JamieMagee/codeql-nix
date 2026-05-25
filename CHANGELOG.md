@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   overrides of `configurePhase`, `buildPhase`, `checkPhase`, and
   `installPhase` while leaving hook-based customization and unrelated
   phases to their dedicated rules.
+- `ql/src/Security/CWE-1078/ProtectedPhaseOverride.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/ProtectedPhaseOverride/`): ports
+  `nixpkgs-hammering`'s `fixup-phase` and `patch-phase` rules. Flags
+  derivations that override `fixupPhase` or `patchPhase` directly
+  instead of extending the default phase with `pre*` / `post*` hooks.
 
 ### Changed
 
