@@ -1,0 +1,72 @@
+testKinds
+| derivations.nix:15:17:19:3 | ApplyExpression | stdenv |
+| derivations.nix:22:10:25:3 | ApplyExpression | stdenvNoCC |
+| derivations.nix:28:11:31:4 | ApplyExpression | stdenv |
+| derivations.nix:34:14:37:4 | ApplyExpression | stdenv |
+| derivations.nix:40:17:46:3 | ApplyExpression | stdenv |
+| derivations.nix:49:17:58:3 | ApplyExpression | stdenv |
+| derivations.nix:61:14:65:3 | ApplyExpression | stdenv |
+| derivations.nix:68:8:72:3 | ApplyExpression | buildPythonPackage |
+| derivations.nix:75:11:78:3 | ApplyExpression | buildPythonApplication |
+| derivations.nix:81:18:84:3 | ApplyExpression | stdenv |
+| derivations.nix:87:22:90:3 | ApplyExpression | stdenv |
+| derivations.nix:93:16:98:3 | ApplyExpression | stdenv |
+testHasAttr
+| derivations.nix:15:17:19:3 | ApplyExpression | pname |
+| derivations.nix:15:17:19:3 | ApplyExpression | src |
+| derivations.nix:15:17:19:3 | ApplyExpression | version |
+| derivations.nix:22:10:25:3 | ApplyExpression | buildInputs |
+| derivations.nix:22:10:25:3 | ApplyExpression | pname |
+| derivations.nix:28:11:31:4 | ApplyExpression | pname |
+| derivations.nix:28:11:31:4 | ApplyExpression | version |
+| derivations.nix:34:14:37:4 | ApplyExpression | pname |
+| derivations.nix:34:14:37:4 | ApplyExpression | version |
+| derivations.nix:40:17:46:3 | ApplyExpression | pname |
+| derivations.nix:40:17:46:3 | ApplyExpression | src |
+| derivations.nix:40:17:46:3 | ApplyExpression | version |
+| derivations.nix:49:17:58:3 | ApplyExpression | pname |
+| derivations.nix:49:17:58:3 | ApplyExpression | version |
+| derivations.nix:61:14:65:3 | ApplyExpression | pname |
+| derivations.nix:61:14:65:3 | ApplyExpression | src |
+| derivations.nix:61:14:65:3 | ApplyExpression | version |
+| derivations.nix:68:8:72:3 | ApplyExpression | format |
+| derivations.nix:68:8:72:3 | ApplyExpression | pname |
+| derivations.nix:68:8:72:3 | ApplyExpression | version |
+| derivations.nix:75:11:78:3 | ApplyExpression | pname |
+| derivations.nix:75:11:78:3 | ApplyExpression | version |
+| derivations.nix:81:18:84:3 | ApplyExpression | buildInputs |
+| derivations.nix:81:18:84:3 | ApplyExpression | pname |
+| derivations.nix:81:18:84:3 | ApplyExpression | src |
+| derivations.nix:81:18:84:3 | ApplyExpression | version |
+| derivations.nix:87:22:90:3 | ApplyExpression | buildInputs |
+| derivations.nix:87:22:90:3 | ApplyExpression | pname |
+| derivations.nix:87:22:90:3 | ApplyExpression | version |
+| derivations.nix:93:16:98:3 | ApplyExpression | pname |
+| derivations.nix:93:16:98:3 | ApplyExpression | version |
+testOrder
+| derivations.nix:15:17:19:3 | ApplyExpression | 0 | pname |
+| derivations.nix:15:17:19:3 | ApplyExpression | 1 | version |
+| derivations.nix:15:17:19:3 | ApplyExpression | 2 | src |
+| derivations.nix:22:10:25:3 | ApplyExpression | 0 | pname |
+| derivations.nix:22:10:25:3 | ApplyExpression | 1 | buildInputs |
+| derivations.nix:28:11:31:4 | ApplyExpression | 0 | pname |
+| derivations.nix:28:11:31:4 | ApplyExpression | 1 | version |
+| derivations.nix:34:14:37:4 | ApplyExpression | 0 | pname |
+| derivations.nix:34:14:37:4 | ApplyExpression | 1 | version |
+| derivations.nix:40:17:46:3 | ApplyExpression | 0 | pname |
+| derivations.nix:40:17:46:3 | ApplyExpression | 1 | version |
+| derivations.nix:40:17:46:3 | ApplyExpression | 2 | src |
+| derivations.nix:49:17:58:3 | ApplyExpression | 0 | pname |
+| derivations.nix:49:17:58:3 | ApplyExpression | 1 | version |
+| derivations.nix:61:14:65:3 | ApplyExpression | 0 | pname |
+| derivations.nix:61:14:65:3 | ApplyExpression | 1 | version |
+| derivations.nix:61:14:65:3 | ApplyExpression | 2 | src |
+| derivations.nix:68:8:72:3 | ApplyExpression | 0 | pname |
+| derivations.nix:68:8:72:3 | ApplyExpression | 1 | version |
+| derivations.nix:68:8:72:3 | ApplyExpression | 2 | format |
+| derivations.nix:75:11:78:3 | ApplyExpression | 0 | pname |
+| derivations.nix:75:11:78:3 | ApplyExpression | 1 | version |
+| derivations.nix:81:18:84:3 | ApplyExpression | 1 | buildInputs |
+| derivations.nix:87:22:90:3 | ApplyExpression | 1 | buildInputs |
+| derivations.nix:93:16:98:3 | ApplyExpression | 0 | pname |
+| derivations.nix:93:16:98:3 | ApplyExpression | 1 | version |

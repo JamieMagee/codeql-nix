@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ql/lib/codeql/nix/Derivation.qll`: recognises calls to nixpkgs-style
+  derivation wrappers (`stdenv.mkDerivation`, `stdenvNoCC.mkDerivation`,
+  `buildPythonPackage`, `buildPythonApplication` — faithful to
+  `nixpkgs-hammering`'s scope) and exposes `getKind`, `getAttrs`,
+  `hasAttr`, `getDirectBinding`, `getADirectBinding`, and
+  `getNthAttrName`. `getAttrs` peels through parens, the
+  `(finalAttrs: { … })` callback shape, and `let … in { … }` bodies.
+  Foundation for the Phase 3a `nixpkgs-hammering`-port queries.
+- `ql/test/library-tests/Derivation/`: library-level test covering 12
+  derivation-call shapes including callback, callback+rec, callback+let,
+  parens, plain rec, both Python wrappers, and `inherit` / inherit-from
+  cases.
+
+### Changed
+
+- `ql/src/codeql-suites/nix-code-scanning.qls`: now excludes queries
+  tagged `quality`. Existing queries (tagged `maintainability` /
+  `correctness`) are unaffected; Phase 3a quality lints will be picked
+  up by the new `nix-code-quality.qls` suite instead.
+
 ## [0.2.0] — 2026-05-24 (Phase 2)
 
 ### Added

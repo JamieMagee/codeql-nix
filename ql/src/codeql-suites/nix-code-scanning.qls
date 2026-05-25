@@ -1,3 +1,5 @@
 - description: "Standard Code Scanning queries for Nix"
 - queries: .
   from: jamiemagee/nix-queries
+- exclude:
+    tags contain: quality
