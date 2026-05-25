@@ -1,0 +1,58 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A derivation declares the same package in <code>propagatedBuildInputs</code>
+and in <code>checkInputs</code> or <code>nativeCheckInputs</code>.
+</p>
+<p>
+In nixpkgs, everything from <code>propagatedBuildInputs</code> is already
+available during the check phase, so repeating the same package in a check-only
+input list is redundant.
+</p>
+<p>
+This query is intentionally syntactic: it only checks direct list literals on
+both attributes. Dynamically constructed lists are ignored.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Keep runtime dependencies in <code>propagatedBuildInputs</code> and list only
+extra test-only dependencies in <code>checkInputs</code> or
+<code>nativeCheckInputs</code>. Remove any package that appears in both places.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — <code>pytest</code> is listed twice:</p>
+<sample language="nix">
+{ stdenv, pytest, requests }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  propagatedBuildInputs = [ requests pytest ];
+  checkInputs = [ pytest ];
+}
+</sample>
+<p>Recommended — keep <code>pytest</code> only where it is needed:</p>
+<sample language="nix">
+{ stdenv, requests, pytest }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  propagatedBuildInputs = [ requests ];
+  checkInputs = [ pytest ];
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/duplicate-check-inputs.md">
+<code>nixpkgs-hammering</code> explanation: <code>duplicate-check-inputs</code></a>
+</li>
+</references>
+</qhelp>

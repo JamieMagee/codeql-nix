@@ -53,6 +53,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   likely top-level derivation-attribute typos when they are either
   case-only mistakes or members of a handwritten typo allow-list; leaves
   unrelated custom attributes alone.
+- `ql/src/Security/CWE-1078/DuplicateCheckInputs.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/DuplicateCheckInputs/`): ports
+  `nixpkgs-hammering`'s `duplicate-check-inputs` rule. Flags
+  derivations that repeat a package from `propagatedBuildInputs` in
+  `checkInputs` or `nativeCheckInputs`, where the check-time copy is
+  redundant.
 
 ### Changed
 
