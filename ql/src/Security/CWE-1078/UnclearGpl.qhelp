@@ -1,0 +1,63 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+The unqualified GNU license aliases in <code>lib.licenses</code> — such as
+<code>gpl2</code>, <code>gpl3</code>, <code>lgpl2</code>, <code>lgpl21</code>,
+and <code>lgpl3</code> — are deprecated. They are ambiguous because the name
+alone does not say whether the package is licensed under that exact version
+(<code>Only</code>) or under that version or any later version
+(<code>Plus</code>).
+</p>
+<p>
+Leaving the alias ambiguous makes reviews harder and can encode the wrong legal
+meaning in <code>meta.license</code>.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Replace the deprecated alias with the matching unambiguous one, such as
+<code>gpl3Only</code> or <code>gpl3Plus</code>. Determine which variant applies
+from the project's README, website, or source-file license headers; if the
+terms are still unclear, ask upstream to clarify them.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — deprecated ambiguous aliases:</p>
+<sample language="nix">
+{ stdenv, lib }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  meta.license = with lib.licenses; [ gpl3 mit ];
+}
+</sample>
+<p>Recommended — use an explicit <code>Only</code> or <code>Plus</code> alias:</p>
+<sample language="nix">
+{ stdenv, lib }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  meta.license = with lib.licenses; [ gpl3Only mit ];
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/unclear-gpl.md"><code>nixpkgs-hammering</code> explanation: <code>unclear-gpl</code></a>
+</li>
+<li>
+GNU: <a href="https://www.gnu.org/licenses/identify-licenses-clearly.html">How to use GNU licenses for your own software</a>
+</li>
+<li>
+Nixpkgs deprecation discussion:
+<a href="https://github.com/NixOS/nixpkgs/pull/92348">PR #92348</a>,
+<a href="https://discourse.nixos.org/t/lib-licenses-gpl3-co-are-now-deprecated/8206">Discourse thread</a>
+</li>
+</references>
+</qhelp>
