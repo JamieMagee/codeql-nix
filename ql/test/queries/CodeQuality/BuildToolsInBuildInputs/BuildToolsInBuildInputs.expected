@@ -1,0 +1,5 @@
+| fixture.nix:7:21:7:25 | VariableExpression | This derivation declares the build tool `cmake` in `buildInputs`. Move it to `nativeBuildInputs` instead. |
+| fixture.nix:13:21:13:25 | VariableExpression | This derivation declares the build tool `meson` in `buildInputs`. Move it to `nativeBuildInputs` instead. |
+| fixture.nix:13:27:13:36 | VariableExpression | This derivation declares the build tool `pkg-config` in `buildInputs`. Move it to `nativeBuildInputs` instead. |
+| fixture.nix:31:21:31:29 | SelectExpression | This derivation declares the build tool `qt5.qmake` in `buildInputs`. Move it to `nativeBuildInputs` instead. |
+| fixture.nix:37:21:37:25 | VariableExpression | This derivation declares the build tool `cmake` in `buildInputs`. Move it to `nativeBuildInputs` instead. |
