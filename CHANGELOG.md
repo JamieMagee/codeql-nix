@@ -74,6 +74,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `nixpkgs-hammering`'s `environment-variables-go-to-env` rule. Flags
   selected environment variables declared as top-level derivation
   attributes and recommends moving them under `env`.
+- `ql/src/Security/CWE-1078/UnnecessaryParallelBuilding.ql` (plus qhelp
+  and `ql/test/queries/CodeQuality/UnnecessaryParallelBuilding/`): ports
+  `nixpkgs-hammering`'s `unnecessary-parallel-building` rule. Flags
+  redundant `enableParallelBuilding = true;` when Meson, CMake, or qmake
+  already enables parallel builds through the default configure hook.
 
 ### Changed
 
