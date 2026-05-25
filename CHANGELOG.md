@@ -47,6 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `configurePhase`, `buildPhase`, `checkPhase`, and `installPhase`.
   Flags string-literal phase overrides that omit the corresponding
   `runHook preX` and/or `runHook postX` calls.
+- `ql/src/Security/CWE-1078/AttributeTypo.ql` (plus qhelp and
+  `ql/test/queries/CodeQuality/AttributeTypo/`): ports the narrow Phase
+  3a variant of `nixpkgs-hammering`'s `attribute-typo` rule. Flags
+  likely top-level derivation-attribute typos when they are either
+  case-only mistakes or members of a handwritten typo allow-list; leaves
+  unrelated custom attributes alone.
 
 ### Changed
 
