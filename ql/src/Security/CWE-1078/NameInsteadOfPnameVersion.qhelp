@@ -1,0 +1,63 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+In nixpkgs, <code>stdenv.mkDerivation</code> and compatible wrappers can derive
+<code>name</code> automatically from <code>pname</code> and <code>version</code>
+as <code>${pname}-${version}</code>. When a derivation sets
+<code>name</code> explicitly alongside <code>version</code> but omits
+<code>pname</code>, that convention is bypassed.
+</p>
+<p>
+This is easy to overlook in older expressions that predate widespread
+<code>pname</code>/<code>version</code> usage. It also breaks tooling that expects
+<code>pname</code> to be present, even if the explicit <code>name</code> happens to
+look like a conventional <code>${pname}-${version}</code> string.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Prefer separate <code>pname</code> and <code>version</code> attributes and let the
+wrapper derive <code>name</code> automatically. If you intentionally need a custom
+<code>name</code>, keep <code>pname</code> as well so downstream tooling can still
+identify the package correctly.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  name = "foo";
+  version = "1.2";
+}
+</sample>
+<p>Correct:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "foo";
+  version = "1.2";
+}
+</sample>
+<p>Also acceptable when a custom derivation name is deliberate:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  name = "foo-minimal";
+  pname = "foo";
+  version = "1.2";
+}
+</sample>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/name-and-version.md">nixpkgs-hammering: name-and-version</a>
+</li>
+</references>
+</qhelp>

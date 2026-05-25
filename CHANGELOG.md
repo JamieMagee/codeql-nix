@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `nixpkgs-hammering`'s `meson-cmake` rule. Flags derivations whose
   `nativeBuildInputs` declare both `meson` and `cmake`, where nixpkgs
   convention is to pick one primary configure-phase build system.
+- `ql/src/Security/CWE-1078/NameInsteadOfPnameVersion.{ql,qhelp}`: ports
+  nixpkgs-hammering's `name-and-version` rule, flagging derivations that
+  set `name` and `version` without `pname`; includes a CodeQuality qltest
+  fixture covering direct, `inherit`, callback, and `buildPythonPackage`
+  forms.
 
 ### Changed
 

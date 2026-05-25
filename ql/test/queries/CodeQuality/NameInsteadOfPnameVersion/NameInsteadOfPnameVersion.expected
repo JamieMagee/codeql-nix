@@ -1,0 +1,4 @@
+| fixture.nix:7:15:10:3 | ApplyExpression | Derivation sets `name` and `version` without `pname`; prefer `pname` + `version` and let `name` be derived automatically. |
+| fixture.nix:13:23:16:3 | ApplyExpression | Derivation sets `name` and `version` without `pname`; prefer `pname` + `version` and let `name` be derived automatically. |
+| fixture.nix:37:17:40:4 | ApplyExpression | Derivation sets `name` and `version` without `pname`; prefer `pname` + `version` and let `name` be derived automatically. |
+| fixture.nix:43:27:47:3 | ApplyExpression | Derivation sets `name` and `version` without `pname`; prefer `pname` + `version` and let `name` be derived automatically. |
