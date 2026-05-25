@@ -1,0 +1,67 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+A derivation overrides <code>patchPhase</code> or <code>fixupPhase</code>
+directly. Those phases in <code>stdenv</code> do important default work that
+many nixpkgs packages rely on.
+</p>
+<p>
+<code>patchPhase</code> applies entries from <code>patches</code>.
+<code>fixupPhase</code> runs post-install fixups such as stripping binaries and
+applying ELF / RPATH fixups through setup hooks. Replacing either phase
+wholesale can silently drop that behaviour unless it is reimplemented by hand.
+</p>
+</overview>
+
+<recommendation>
+<p>
+Keep the default phase and extend it with <code>prePatch</code> /
+<code>postPatch</code> or <code>preFixup</code> / <code>postFixup</code>
+instead. If the goal is to disable one fixup action, prefer the targeted knob
+for that action (for example <code>dontStrip</code> or
+<code>dontPatchELF</code>) rather than replacing all of
+<code>fixupPhase</code>.
+</p>
+</recommendation>
+
+<example>
+<p>Problematic — overrides <code>fixupPhase</code> directly:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  fixupPhase = ''
+    echo "custom fixup"
+  '';
+}
+</sample>
+<p>Recommended — keep the default phase and extend it with a hook:</p>
+<sample language="nix">
+{ stdenv }:
+stdenv.mkDerivation {
+  pname = "demo";
+  version = "1.0";
+  postFixup = ''
+    echo "custom fixup"
+  '';
+}
+</sample>
+<p>The same pattern applies to <code>patchPhase</code>: prefer
+<code>prePatch</code> / <code>postPatch</code> to replacing the phase.</p>
+</example>
+
+<references>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/fixup-phase.md">
+<code>nixpkgs-hammering</code> explanation: <code>fixup-phase</code></a>
+</li>
+<li>
+<a href="https://github.com/jtojnar/nixpkgs-hammering/blob/main/explanations/patch-phase.md">
+<code>nixpkgs-hammering</code> explanation: <code>patch-phase</code></a>
+</li>
+</references>
+</qhelp>
